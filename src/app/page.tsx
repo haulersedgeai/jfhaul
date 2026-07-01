@@ -18,7 +18,7 @@ export default function Home() {
       <section className="relative overflow-hidden bg-gradient-to-b from-cream-50 to-cream-100">
         <div className="container-x pt-10 md:pt-16 pb-12 md:pb-20">
           <div className="grid gap-10 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] items-center">
-            <Reveal className="max-w-2xl">
+            <Reveal eager className="max-w-2xl">
               <div className="flex flex-wrap gap-2 mb-5">
                 <Badge tone="accent">Family + woman-owned</Badge>
                 <Badge tone="brand">Licensed &amp; insured</Badge>
@@ -53,7 +53,7 @@ export default function Home() {
               </ul>
             </Reveal>
 
-            <Reveal delay={0.1}>
+            <Reveal eager delay={0.1}>
               <div className="relative">
                 <div className="absolute -inset-6 rounded-[36px] bg-gradient-to-br from-brand-100 to-accent-100 blur-2xl opacity-60" aria-hidden="true" />
                 <div className="relative overflow-hidden rounded-[28px] shadow-[var(--shadow-lift)] border border-white">
