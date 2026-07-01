@@ -49,17 +49,11 @@ export const metadata: Metadata = {
     description:
       "Family + woman-owned junk removal in Birmingham, AL and nearby cities. Same-day service, upfront pricing.",
     url: business.siteUrl,
-    images: [{ url: "/og.png", width: 1200, height: 630, alt: business.name }],
   },
   twitter: {
     card: "summary_large_image",
     title: `${business.name} — ${business.tagline}`,
     description: "Junk removal in Birmingham, AL. Family + woman-owned. 205-624-0731.",
-    images: ["/og.png"],
-  },
-  icons: {
-    icon: [{ url: "/favicon.ico" }],
-    apple: [{ url: "/apple-icon.png" }],
   },
   alternates: { canonical: business.siteUrl },
   robots: { index: true, follow: true },
