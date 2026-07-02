@@ -28,10 +28,10 @@ export default function ContactPage() {
             <div className="max-w-3xl">
               <div className="text-sm font-semibold uppercase tracking-widest text-accent-600 mb-3">Contact</div>
               <h1 className="text-4xl md:text-6xl font-bold text-ink-800 [text-wrap:balance]">
-                Let&apos;s get your junk out of the way.
+                Let's get your junk out of the way.
               </h1>
               <p className="mt-4 text-lg text-ink-500 max-w-2xl">
-                Call, text, email, or fill out the form. Whichever&apos;s easiest — you&apos;ll usually hear back within an hour during business hours.
+                Call, text, email, or fill out the form. Whichever's easiest — you'll usually hear back within an hour during business hours.
               </p>
             </div>
           </Reveal>
@@ -65,7 +65,7 @@ export default function ContactPage() {
               <Card className="p-6">
                 <div className="text-xs font-semibold uppercase tracking-widest text-accent-600 mb-2">Hours</div>
                 <div className="text-lg font-semibold text-ink-800">{business.hours}</div>
-                <div className="mt-2 text-sm text-ink-500">Closed Sundays. Emergency situations? Try us — we&apos;ll do what we can.</div>
+                <div className="mt-2 text-sm text-ink-500">Closed Sundays. Emergency situations? Try us — we'll do what we can.</div>
               </Card>
 
               <Card className="p-6">

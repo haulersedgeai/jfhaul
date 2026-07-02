@@ -1,4 +1,4 @@
-import type { LocationPage } from "./site";
+import { serviceInSentence, serviceSingularName, type LocationPage } from "./site";
 
 const cityFlavor: Record<string, {
   intro: string;
@@ -220,13 +220,15 @@ export function landingCopy(page: LocationPage) {
 
 export function landingFAQ(page: LocationPage) {
   const cityName = page.city;
+  const singular = serviceSingularName(page.service);
+  const inSentence = serviceInSentence(page.service);
   return [
     {
-      q: `How much does ${page.title.toLowerCase()} cost?`,
+      q: `How much does ${inSentence} in ${cityName}, AL cost?`,
       a: `Our ${cityName} pricing depends on how much space your items take up in the truck. We give you a clear, upfront price before we start — no surprises.`,
     },
     {
-      q: `Do you offer same-day service in ${cityName}?`,
+      q: `Do you offer same-day ${singular} in ${cityName}, AL?`,
       a: `Yes. When we have space on the schedule, we can usually be in ${cityName} the same day you call. Call earlier in the day for the best odds.`,
     },
     {
@@ -238,7 +240,7 @@ export function landingFAQ(page: LocationPage) {
       a: `We donate what's donatable to local ${cityName}-area charities, recycle metal and electronics, and dispose of the rest responsibly. Very little ends up in a landfill.`,
     },
     {
-      q: `Are you licensed and insured?`,
+      q: `Are you licensed and insured in ${cityName}, AL?`,
       a: `Yes — J&F Haul and Deliver LLC is fully licensed and insured to work in Alabama, including ${cityName} and the surrounding cities.`,
     },
   ];

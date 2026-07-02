@@ -54,7 +54,7 @@ export default function OG() {
             Same-day junk removal in Birmingham, AL.
           </div>
           <div style={{ fontSize: 32, opacity: 0.9 }}>
-            Family + woman-owned · Licensed &amp; insured · 205-624-0731
+            Family + woman-owned · Licensed & insured · 205-624-0731
           </div>
         </div>
       </div>

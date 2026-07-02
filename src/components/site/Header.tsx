@@ -1,13 +1,23 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
-import { useEffect, useState } from "react";
-import { business, cities, locationPages, services } from "@/data/site";
+import { useEffect, useRef, useState } from "react";
+import { ChevronDown, Menu, Phone, X } from "lucide-react";
+import {
+  birminghamPathForService,
+  business,
+  cities,
+  primaryPathForCity,
+  services,
+} from "@/data/site";
+
+type MenuKey = "services" | "areas" | null;
 
 export function Header() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
+  const [menu, setMenu] = useState<MenuKey>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 24);
@@ -20,41 +30,96 @@ export function Header() {
     document.body.style.overflow = open ? "hidden" : "";
   }, [open]);
 
+  useEffect(() => {
+    if (!menu) return;
+    const onClick = (e: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) setMenu(null);
+    };
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setMenu(null);
+    };
+    document.addEventListener("mousedown", onClick);
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("mousedown", onClick);
+      document.removeEventListener("keydown", onKey);
+    };
+  }, [menu]);
+
   return (
     <header
       className={`sticky top-0 z-40 backdrop-blur transition-all duration-300 ${
         scrolled
-          ? "bg-white/90 shadow-[0_2px_20px_rgba(15,93,107,0.08)] py-2"
-          : "bg-white/60 py-3"
+          ? "bg-white/95 shadow-[0_2px_20px_rgba(15,93,107,0.08)] py-2"
+          : "bg-white/70 py-3"
       }`}
     >
       <div className="container-x flex items-center justify-between gap-4">
-        <Link href="/" className="flex items-center gap-2 shrink-0" aria-label={`${business.name} — home`}>
-          <Image
-            src="/images/logo.png"
-            alt={`${business.name} logo`}
-            width={220}
-            height={72}
-            fetchPriority="high"
-            className={`h-10 md:h-12 w-auto transition-all duration-300`}
-          />
-        </Link>
+        <Wordmark />
 
-        <nav className="hidden lg:flex items-center gap-1" aria-label="Primary">
-          <NavLink href="/">Home</NavLink>
-          <ServiceAreasMenu />
-          <NavLink href="/#services">Services</NavLink>
-          <NavLink href="/contact">Contact</NavLink>
+        <nav
+          ref={menuRef}
+          className="hidden lg:flex items-center gap-1"
+          aria-label="Primary"
+        >
+          <NavDropdown
+            label="Services"
+            open={menu === "services"}
+            onToggle={() => setMenu(menu === "services" ? null : "services")}
+          >
+            <div className="p-3 min-w-[560px] grid grid-cols-2 gap-1">
+              {services.map((s) => (
+                <Link
+                  key={s.slug}
+                  href={birminghamPathForService(s.slug)}
+                  onClick={() => setMenu(null)}
+                  className="px-3 py-2 rounded-lg text-sm text-ink-700 hover:bg-brand-50 hover:text-brand-800"
+                >
+                  {s.name}
+                </Link>
+              ))}
+            </div>
+          </NavDropdown>
+
+          <NavDropdown
+            label="Service Areas"
+            open={menu === "areas"}
+            onToggle={() => setMenu(menu === "areas" ? null : "areas")}
+          >
+            <div className="p-3 min-w-[260px] flex flex-col gap-1">
+              {cities.map((c) => (
+                <Link
+                  key={c.slug}
+                  href={primaryPathForCity(c.slug)}
+                  onClick={() => setMenu(null)}
+                  className="px-3 py-2 rounded-lg text-sm text-ink-700 hover:bg-brand-50 hover:text-brand-800"
+                >
+                  {c.name}, {c.state}
+                </Link>
+              ))}
+            </div>
+          </NavDropdown>
+
+          <NavLink href="/about" onClick={() => setMenu(null)}>
+            About
+          </NavLink>
         </nav>
 
-        <div className="hidden md:flex items-center gap-3">
+        <div className="hidden md:flex items-center gap-4">
           <a
             href={business.telHref}
+            className="inline-flex items-center gap-2 text-ink-800 font-semibold hover:text-brand-800"
+            aria-label={`Call ${business.phone}`}
+          >
+            <Phone size={16} aria-hidden="true" />
+            {business.phone}
+          </a>
+          <Link
+            href="/contact"
             className="inline-flex items-center gap-2 rounded-full bg-accent-500 hover:bg-accent-600 px-5 py-2.5 text-white font-semibold shadow-[var(--shadow-soft)] transition"
           >
-            <PhoneIcon />
-            <span>{business.phone}</span>
-          </a>
+            Get a Quote
+          </Link>
         </div>
 
         <button
@@ -65,9 +130,7 @@ export function Header() {
           aria-expanded={open}
           aria-controls="mobile-drawer"
         >
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-            <path d="M3 6h18M3 12h18M3 18h18" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-          </svg>
+          <Menu size={22} aria-hidden="true" />
         </button>
       </div>
 
@@ -78,7 +141,9 @@ export function Header() {
         aria-hidden={!open}
       >
         <div
-          className={`absolute inset-0 bg-ink-900/40 transition-opacity ${open ? "opacity-100" : "opacity-0"}`}
+          className={`absolute inset-0 bg-ink-900/40 transition-opacity ${
+            open ? "opacity-100" : "opacity-0"
+          }`}
           onClick={() => setOpen(false)}
         />
         <div
@@ -87,16 +152,14 @@ export function Header() {
           }`}
         >
           <div className="flex items-center justify-between px-5 py-4 border-b border-ink-100">
-            <Image src="/images/logo.png" alt="" width={140} height={44} className="h-9 w-auto" />
+            <Wordmark size="sm" onClick={() => setOpen(false)} />
             <button
               type="button"
               onClick={() => setOpen(false)}
-              className="h-10 w-10 rounded-full bg-ink-50 text-ink-800"
+              className="h-10 w-10 rounded-full bg-ink-50 text-ink-800 grid place-items-center"
               aria-label="Close menu"
             >
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" className="mx-auto" aria-hidden="true">
-                <path d="M6 6l12 12M18 6L6 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-              </svg>
+              <X size={18} aria-hidden="true" />
             </button>
           </div>
           <div className="p-5 overflow-y-auto h-[calc(100%-64px)] pb-24">
@@ -104,18 +167,19 @@ export function Header() {
             <div className="mt-6 flex flex-col gap-3">
               <a
                 href={business.telHref}
+                onClick={() => setOpen(false)}
+                className="inline-flex items-center justify-center gap-2 text-ink-800 font-semibold border border-ink-100 rounded-full px-5 py-3"
+              >
+                <Phone size={16} aria-hidden="true" />
+                Call {business.phone}
+              </a>
+              <Link
+                href="/contact"
+                onClick={() => setOpen(false)}
                 className="inline-flex items-center justify-center gap-2 rounded-full bg-accent-500 px-5 py-3 text-white font-semibold"
-                onClick={() => setOpen(false)}
               >
-                <PhoneIcon /> Call {business.phone}
-              </a>
-              <a
-                href={business.smsHref}
-                className="inline-flex items-center justify-center gap-2 rounded-full bg-white border border-brand-100 text-brand-800 px-5 py-3 font-semibold"
-                onClick={() => setOpen(false)}
-              >
-                Text us
-              </a>
+                Get a Quote
+              </Link>
             </div>
           </div>
         </div>
@@ -124,69 +188,85 @@ export function Header() {
   );
 }
 
-function NavLink({ href, children }: { href: string; children: React.ReactNode }) {
+function Wordmark({
+  size = "md",
+  onClick,
+}: {
+  size?: "sm" | "md";
+  onClick?: () => void;
+}) {
+  const cls =
+    size === "sm"
+      ? "text-lg md:text-xl"
+      : "text-xl md:text-[1.4rem]";
+  return (
+    <Link
+      href="/"
+      onClick={onClick}
+      className={`font-display font-black tracking-tight text-ink-800 hover:text-brand-800 ${cls}`}
+      aria-label={`${business.name} — home`}
+    >
+      J<span className="text-accent-500">&</span>F Haul{" "}
+      <span className="text-ink-500 font-semibold">& Deliver</span>
+    </Link>
+  );
+}
+
+function NavLink({
+  href,
+  onClick,
+  children,
+}: {
+  href: string;
+  onClick?: () => void;
+  children: React.ReactNode;
+}) {
   return (
     <Link
       href={href}
-      className="px-3 py-2 rounded-full text-ink-700 hover:text-brand-800 hover:bg-brand-50 font-medium transition"
+      onClick={onClick}
+      className="px-3 py-2 rounded-full text-ink-700 hover:text-brand-800 hover:bg-brand-50 font-semibold text-[0.95rem] transition"
     >
       {children}
     </Link>
   );
 }
 
-function ServiceAreasMenu() {
-  const [open, setOpen] = useState(false);
+function NavDropdown({
+  label,
+  open,
+  onToggle,
+  children,
+}: {
+  label: string;
+  open: boolean;
+  onToggle: () => void;
+  children: React.ReactNode;
+}) {
   return (
-    <div
-      className="relative"
-      onMouseEnter={() => setOpen(true)}
-      onMouseLeave={() => setOpen(false)}
-    >
+    <div className="relative">
       <button
         type="button"
-        onClick={() => setOpen((o) => !o)}
         aria-haspopup="menu"
         aria-expanded={open}
-        className="inline-flex items-center gap-1 px-3 py-2 rounded-full text-ink-700 hover:text-brand-800 hover:bg-brand-50 font-medium transition"
+        onClick={onToggle}
+        className="inline-flex items-center gap-1 px-3 py-2 rounded-full text-ink-700 hover:text-brand-800 hover:bg-brand-50 font-semibold text-[0.95rem] transition"
       >
-        Service Areas
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-          <path d="M6 9l6 6 6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-        </svg>
+        {label}
+        <ChevronDown
+          size={14}
+          aria-hidden="true"
+          className={`transition-transform ${open ? "rotate-180" : ""}`}
+        />
       </button>
       <div
         role="menu"
-        className={`absolute left-1/2 -translate-x-1/2 top-full pt-2 transition-all ${
+        className={`absolute left-0 top-full pt-2 transition-all ${
           open ? "opacity-100 visible" : "opacity-0 invisible pointer-events-none"
         }`}
       >
-        <div className="bg-white rounded-2xl shadow-[var(--shadow-lift)] border border-ink-100 p-3 min-w-[520px] grid grid-cols-2 gap-2">
-          {cities.map((c) => {
-            const pages = locationPages.filter((p) => p.citySlug === c.slug);
-            return (
-              <div key={c.slug} className="p-3">
-                <div className="text-xs font-semibold uppercase tracking-widest text-accent-600 mb-2">
-                  {c.name}, AL
-                </div>
-                <ul className="space-y-1.5">
-                  {pages.slice(0, 5).map((p) => {
-                    const svc = services.find((s) => s.slug === p.service);
-                    return (
-                      <li key={p.path}>
-                        <Link
-                          href={p.path}
-                          className="text-sm text-ink-700 hover:text-brand-800 hover:underline"
-                        >
-                          {svc?.name ?? p.title}
-                        </Link>
-                      </li>
-                    );
-                  })}
-                </ul>
-              </div>
-            );
-          })}
+        <div className="bg-white rounded-2xl shadow-[var(--shadow-lift)] border border-ink-100">
+          {children}
         </div>
       </div>
     </div>
@@ -195,59 +275,54 @@ function ServiceAreasMenu() {
 
 function MobileNav({ onNavigate }: { onNavigate: () => void }) {
   return (
-    <nav aria-label="Mobile primary" className="space-y-2">
-      <MobileLink href="/" onClick={onNavigate}>Home</MobileLink>
-      <MobileLink href="/#services" onClick={onNavigate}>Services</MobileLink>
-      <MobileLink href="/contact" onClick={onNavigate}>Contact</MobileLink>
-      <div className="pt-4">
-        <div className="text-xs font-semibold uppercase tracking-widest text-accent-600 px-3 mb-2">Service areas</div>
-        {cities.map((c) => (
-          <details key={c.slug} className="group px-3 py-2 rounded-xl">
-            <summary className="cursor-pointer list-none flex items-center justify-between font-semibold text-ink-800">
-              {c.name}, AL
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" className="transition group-open:rotate-180" aria-hidden="true">
-                <path d="M6 9l6 6 6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
-            </summary>
-            <ul className="mt-2 space-y-1.5 pl-1">
-              {locationPages.filter((p) => p.citySlug === c.slug).map((p) => {
-                const svc = services.find((s) => s.slug === p.service);
-                return (
-                  <li key={p.path}>
-                    <Link
-                      href={p.path}
-                      onClick={onNavigate}
-                      className="block px-3 py-1.5 rounded-lg text-ink-700 hover:bg-brand-50 hover:text-brand-800"
-                    >
-                      {svc?.name ?? p.title}
-                    </Link>
-                  </li>
-                );
-              })}
-            </ul>
-          </details>
-        ))}
-      </div>
+    <nav aria-label="Mobile primary" className="space-y-1">
+      <details className="group px-3 py-2 rounded-xl bg-cream-50">
+        <summary className="cursor-pointer list-none flex items-center justify-between font-bold text-ink-800 text-lg">
+          Services
+          <ChevronDown size={16} className="transition group-open:rotate-180" aria-hidden="true" />
+        </summary>
+        <ul className="mt-2 space-y-1 pl-1">
+          {services.map((s) => (
+            <li key={s.slug}>
+              <Link
+                href={birminghamPathForService(s.slug)}
+                onClick={onNavigate}
+                className="block px-3 py-2 rounded-lg text-ink-700 hover:bg-brand-50 hover:text-brand-800 text-[0.95rem]"
+              >
+                {s.name}
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </details>
+
+      <details className="group px-3 py-2 rounded-xl bg-cream-50">
+        <summary className="cursor-pointer list-none flex items-center justify-between font-bold text-ink-800 text-lg">
+          Service Areas
+          <ChevronDown size={16} className="transition group-open:rotate-180" aria-hidden="true" />
+        </summary>
+        <ul className="mt-2 space-y-1 pl-1">
+          {cities.map((c) => (
+            <li key={c.slug}>
+              <Link
+                href={primaryPathForCity(c.slug)}
+                onClick={onNavigate}
+                className="block px-3 py-2 rounded-lg text-ink-700 hover:bg-brand-50 hover:text-brand-800"
+              >
+                {c.name}, {c.state}
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </details>
+
+      <Link
+        href="/about"
+        onClick={onNavigate}
+        className="block px-4 py-3 rounded-xl bg-cream-50 font-bold text-ink-800 text-lg hover:bg-brand-50 hover:text-brand-800"
+      >
+        About
+      </Link>
     </nav>
-  );
-}
-
-function MobileLink({ href, children, onClick }: { href: string; children: React.ReactNode; onClick: () => void }) {
-  return (
-    <Link
-      href={href}
-      onClick={onClick}
-      className="block px-3 py-3 rounded-xl text-lg font-semibold text-ink-800 hover:bg-brand-50 hover:text-brand-800"
-    >
-      {children}
-    </Link>
-  );
-}
-
-function PhoneIcon() {
-  return (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-      <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-    </svg>
   );
 }

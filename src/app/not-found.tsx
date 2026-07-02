@@ -7,10 +7,10 @@ export default function NotFound() {
       <div className="mx-auto max-w-2xl">
         <div className="text-xs font-semibold uppercase tracking-widest text-accent-600 mb-3">404</div>
         <h1 className="text-4xl md:text-6xl font-bold text-ink-800 [text-wrap:balance]">
-          We couldn&apos;t find that page.
+          We couldn't find that page.
         </h1>
         <p className="mt-4 text-lg text-ink-500">
-          The page you&apos;re looking for may have been moved or renamed. If you were trying to book a pickup, we&apos;re just a call away.
+          The page you're looking for may have been moved or renamed. If you were trying to book a pickup, we're just a call away.
         </p>
         <div className="mt-8 flex flex-wrap gap-3 justify-center">
           <a

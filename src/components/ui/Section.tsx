@@ -33,21 +33,27 @@ export function SectionHeader({
   title,
   intro,
   centered = false,
+  tone = "light",
 }: {
   eyebrow?: string;
   title: string;
   intro?: string;
   centered?: boolean;
+  tone?: "light" | "dark";
 }) {
+  const titleCls = tone === "dark" ? "text-white" : "text-ink-800";
+  const introCls = tone === "dark" ? "text-white/80" : "text-ink-500";
+  const eyebrowCls = tone === "dark" ? "text-accent-300" : "text-accent-600";
   return (
     <header className={`max-w-3xl ${centered ? "mx-auto text-center" : ""} mb-10 md:mb-14`}>
       {eyebrow && (
-        <div className="mb-3 text-sm font-semibold uppercase tracking-widest text-accent-600">
+        <div className={`inline-flex items-center gap-2 mb-4 text-[0.72rem] md:text-xs font-bold uppercase tracking-[0.18em] ${eyebrowCls}`}>
+          <span aria-hidden="true" className={`h-px w-6 ${tone === "dark" ? "bg-accent-300" : "bg-accent-500"} opacity-70`} />
           {eyebrow}
         </div>
       )}
-      <h2 className="text-3xl md:text-5xl font-bold text-ink-800 [text-wrap:balance]">{title}</h2>
-      {intro && <p className="mt-4 text-lg text-ink-500 [text-wrap:pretty]">{intro}</p>}
+      <h2 className={`font-display font-bold [text-wrap:balance] tracking-[-0.02em] ${titleCls} text-[clamp(1.9rem,4.5vw,3.25rem)] leading-[1.05]`}>{title}</h2>
+      {intro && <p className={`mt-5 text-lg md:text-xl leading-relaxed [text-wrap:pretty] ${introCls}`}>{intro}</p>}
     </header>
   );
 }

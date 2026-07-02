@@ -1,50 +1,51 @@
 import Link from "next/link";
 import Image from "next/image";
-import { business, cities, services, socials, locationPages } from "@/data/site";
+import {
+  birminghamPathForService,
+  business,
+  cities,
+  primaryPathForCity,
+  services,
+  socials,
+} from "@/data/site";
 
 export function Footer() {
   const year = new Date().getFullYear();
   return (
     <footer className="bg-ink-800 text-ink-100 mt-24">
       <div className="container-x py-14 md:py-20">
-        <div className="grid gap-10 md:gap-12 md:grid-cols-4">
+        <div className="grid gap-10 md:gap-12 md:grid-cols-2 lg:grid-cols-4">
+          {/* Col 1 — logo + blurb + socials */}
           <div>
-            <Image
-              src="/images/logo.png"
-              alt={`${business.name} logo`}
-              width={200}
-              height={64}
-              className="h-12 w-auto brightness-0 invert"
-            />
-            <p className="mt-4 text-sm text-ink-200 leading-relaxed max-w-xs">
+            <div className="inline-flex items-center justify-center rounded-2xl bg-white p-4 shadow-[0_10px_30px_rgba(0,0,0,0.25)]">
+              <Image
+                src="/images/logo.png"
+                alt={`${business.name} logo`}
+                width={220}
+                height={72}
+                className="h-16 md:h-20 w-auto object-contain"
+              />
+            </div>
+            <p className="mt-5 text-sm text-ink-200 leading-relaxed max-w-xs">
               Family + woman-owned junk removal proudly serving Birmingham and the surrounding cities. Licensed, insured, and same-day whenever we can be.
             </p>
             <div className="mt-5 flex items-center gap-3">
-              <SocialLink href={socials.facebook} label="Facebook">
-                <FacebookIcon />
-              </SocialLink>
-              <SocialLink href={socials.instagram} label="Instagram">
-                <InstagramIcon />
-              </SocialLink>
-              <SocialLink href={socials.youtube} label="YouTube">
-                <YouTubeIcon />
-              </SocialLink>
-              <SocialLink href={socials.tiktok} label="TikTok">
-                <TikTokIcon />
-              </SocialLink>
-              <SocialLink href={socials.googleSearch} label="Find us on Google">
-                <GoogleIcon />
-              </SocialLink>
+              <SocialLink href={socials.facebook} label="Facebook"><FacebookIcon /></SocialLink>
+              <SocialLink href={socials.instagram} label="Instagram"><InstagramIcon /></SocialLink>
+              <SocialLink href={socials.youtube} label="YouTube"><YouTubeIcon /></SocialLink>
+              <SocialLink href={socials.tiktok} label="TikTok"><TikTokIcon /></SocialLink>
+              <SocialLink href={socials.googleSearch} label="Find us on Google"><GoogleIcon /></SocialLink>
             </div>
           </div>
 
+          {/* Col 2 — Services */}
           <div>
             <h3 className="text-white text-sm font-semibold uppercase tracking-widest mb-4">Services</h3>
             <ul className="space-y-2">
-              {services.slice(0, 10).map((s) => (
+              {services.map((s) => (
                 <li key={s.slug}>
                   <Link
-                    href={`/#service-${s.slug}`}
+                    href={birminghamPathForService(s.slug)}
                     className="text-ink-200 hover:text-white text-sm"
                   >
                     {s.name}
@@ -54,31 +55,37 @@ export function Footer() {
             </ul>
           </div>
 
+          {/* Col 3 — Service Areas */}
           <div>
             <h3 className="text-white text-sm font-semibold uppercase tracking-widest mb-4">Service areas</h3>
             <ul className="space-y-2">
-              {cities.map((c) => {
-                const cityPages = locationPages.filter((p) => p.citySlug === c.slug);
-                const first = cityPages[0]?.path ?? "/contact";
-                return (
-                  <li key={c.slug}>
-                    <Link href={first} className="text-ink-200 hover:text-white text-sm">
-                      {c.name}, {c.state}
-                    </Link>
-                  </li>
-                );
-              })}
+              {cities.map((c) => (
+                <li key={c.slug}>
+                  <Link href={primaryPathForCity(c.slug)} className="text-ink-200 hover:text-white text-sm">
+                    {c.name}, {c.state}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+            <h3 className="text-white text-sm font-semibold uppercase tracking-widest mt-8 mb-3">Company</h3>
+            <ul className="space-y-2">
+              <li><Link href="/about" className="text-ink-200 hover:text-white text-sm">About</Link></li>
+              <li><Link href="/contact" className="text-ink-200 hover:text-white text-sm">Contact</Link></li>
             </ul>
           </div>
 
+          {/* Col 4 — Contact */}
           <div>
             <h3 className="text-white text-sm font-semibold uppercase tracking-widest mb-4">Contact</h3>
-            <ul className="space-y-3 text-sm">
+            <ul className="space-y-4 text-sm">
               <li>
-                <a href={business.telHref} className="text-white text-lg font-semibold hover:text-accent-300">
+                <a href={business.telHref} className="text-white text-xl font-bold hover:text-accent-300">
                   {business.phone}
                 </a>
-                <div className="text-ink-300 text-xs">Call or text — same number</div>
+                <div className="mt-1 flex flex-wrap gap-2 text-xs">
+                  <a href={business.telHref} className="rounded-full bg-white/10 hover:bg-white/20 px-3 py-1">Call</a>
+                  <a href={business.smsHref} className="rounded-full bg-white/10 hover:bg-white/20 px-3 py-1">Text</a>
+                </div>
               </li>
               <li>
                 <a href={business.emailHref} className="text-ink-200 hover:text-white">
@@ -86,20 +93,28 @@ export function Footer() {
                 </a>
               </li>
               <li className="text-ink-200">
-                <div className="font-medium text-white">Hours</div>
+                <div className="font-semibold text-white">Hours</div>
                 <div>{business.hours}</div>
               </li>
               <li className="text-ink-200">
-                <div className="font-medium text-white">Based in</div>
+                <div className="font-semibold text-white">Based in</div>
                 <div>{business.addressCity}, {business.addressState}</div>
               </li>
             </ul>
           </div>
         </div>
 
-        <div className="mt-12 pt-6 border-t border-white/10 flex flex-col md:flex-row md:items-center md:justify-between gap-3 text-xs text-ink-300">
+        {/* Legal bar */}
+        <div className="mt-12 pt-6 border-t border-white/10 grid gap-3 text-xs text-ink-300 md:grid-cols-3 md:items-center">
           <div>© {year} {business.legalName}. All rights reserved.</div>
-          <div>Licensed &amp; insured · Family + woman-owned · Birmingham, AL</div>
+          <div className="md:text-center flex md:justify-center gap-4">
+            <Link href="/terms" className="hover:text-white">Terms</Link>
+            <Link href="/privacy" className="hover:text-white">Privacy</Link>
+          </div>
+          <div className="md:text-right">
+            {/* If Adimize provides a URL later, wrap the text in <a href="..."> and remove this comment. */}
+            Powered by Adimize — Local Service Digital Marketing.
+          </div>
         </div>
       </div>
     </footer>

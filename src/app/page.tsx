@@ -1,13 +1,30 @@
 import Image from "next/image";
 import Link from "next/link";
-import { business, cities, faqs, howItWorks, locationPages, services, trustPoints } from "@/data/site";
+import {
+  birminghamPathForService,
+  business,
+  cities,
+  faqs,
+  howItWorks,
+  locationPages,
+  primaryPathForCity,
+  services,
+  trustPoints,
+} from "@/data/site";
+import { iconFor } from "@/data/serviceIcons";
 import { Section, SectionHeader } from "@/components/ui/Section";
 import { Card } from "@/components/ui/Card";
-import { Badge } from "@/components/ui/Badge";
+import { Kicker } from "@/components/ui/Kicker";
 import { Reveal } from "@/components/site/Reveal";
 import { QuoteForm } from "@/components/site/QuoteForm";
 import { FAQAccordion } from "@/components/site/FAQAccordion";
 import { FAQSchema } from "@/components/site/StructuredData";
+import { TrustBar } from "@/components/site/TrustBar";
+import { ArrowUpRight, Phone, Star, MessageSquare, Mail } from "lucide-react";
+
+// PLACEHOLDER: paste real Google reviews here when ready. Leave empty to hide the block gracefully.
+// Each entry: { author: string, text: string, rating?: 1-5 }
+const realReviews: { author: string; text: string; rating?: number }[] = [];
 
 export default function Home() {
   return (
@@ -15,39 +32,39 @@ export default function Home() {
       <FAQSchema />
 
       {/* HERO */}
-      <section className="relative overflow-hidden bg-gradient-to-b from-cream-50 to-cream-100">
-        <div className="container-x pt-10 md:pt-16 pb-12 md:pb-20">
+      <section className="relative overflow-hidden bg-gradient-to-b from-cream-50 to-white">
+        <div className="hero-arch" aria-hidden="true" />
+        <div className="grain absolute inset-0" aria-hidden="true" />
+        <div className="container-x pt-12 md:pt-16 pb-14 md:pb-20 relative">
           <div className="grid gap-10 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] items-center">
             <Reveal eager className="max-w-2xl">
-              <div className="flex flex-wrap gap-2 mb-5">
-                <Badge tone="accent">Family + woman-owned</Badge>
-                <Badge tone="brand">Licensed &amp; insured</Badge>
-                <Badge tone="neutral">Same-day service</Badge>
-              </div>
-              <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold leading-[1.05] tracking-tight text-ink-800 [text-wrap:balance]">
-                Same-day junk removal in <span className="text-brand-700">Birmingham, AL</span>
+              <Kicker>Birmingham, Alabama · Family + woman-owned</Kicker>
+              <h1 className="mt-4 font-display font-black tracking-[-0.025em] text-ink-800 leading-[1.02] [text-wrap:balance] text-[clamp(2.75rem,6vw,4.75rem)]">
+                Same-day <span className="text-brand-700">junk removal</span> in Birmingham, AL.
               </h1>
               <p className="mt-5 text-lg md:text-xl text-ink-500 max-w-xl [text-wrap:pretty]">
-                From a single couch to a full estate clean-out — Jacorie, Felicia, and the J&amp;F crew do the heavy lifting so you don&apos;t have to. Free upfront quotes, honest prices, no franchise runaround.
+                From a single couch to a full estate clean-out — Jacorie, Felicia, and the J&F crew do the heavy lifting so you don’t have to. Free upfront quotes, honest prices, no franchise runaround.
               </p>
               <div className="mt-7 flex flex-wrap items-center gap-3">
-                <a
-                  href={business.telHref}
-                  className="inline-flex items-center gap-2 rounded-full bg-accent-500 hover:bg-accent-600 text-white font-semibold px-6 py-4 text-lg shadow-[var(--shadow-lift)]"
-                >
-                  <PhoneIcon /> Call or text {business.phone}
-                </a>
                 <Link
-                  href="#quote"
-                  className="inline-flex items-center gap-2 rounded-full bg-white text-brand-800 font-semibold px-6 py-4 text-lg border border-brand-100 hover:border-brand-300"
+                  href="/contact"
+                  className="inline-flex items-center gap-2 rounded-full bg-accent-500 hover:bg-accent-600 text-white font-semibold px-6 py-4 text-lg shadow-[var(--shadow-lift)] transition"
                 >
                   Get a free quote
+                  <ArrowUpRight size={18} aria-hidden="true" />
                 </Link>
+                <a
+                  href={business.telHref}
+                  className="inline-flex items-center gap-2 rounded-full bg-white text-brand-800 font-semibold px-6 py-4 text-lg border border-brand-100 hover:border-brand-300"
+                >
+                  <Phone size={18} aria-hidden="true" /> Call or text {business.phone}
+                </a>
               </div>
               <ul className="mt-7 flex flex-wrap gap-x-6 gap-y-2 text-sm text-ink-500">
-                {trustPoints.map((t) => (
+                {trustPoints.slice(0, 4).map((t) => (
                   <li key={t} className="flex items-center gap-2">
-                    <CheckIcon /> {t}
+                    <span aria-hidden className="h-1.5 w-1.5 rounded-full bg-accent-500" />
+                    {t}
                   </li>
                 ))}
               </ul>
@@ -55,7 +72,9 @@ export default function Home() {
 
             <Reveal eager delay={0.1}>
               <div className="relative">
-                <div className="absolute -inset-6 rounded-[36px] bg-gradient-to-br from-brand-100 to-accent-100 blur-2xl opacity-60" aria-hidden="true" />
+                {/* Accent block behind photo */}
+                <div className="absolute -inset-x-4 -inset-y-6 rounded-[36px] bg-gradient-to-br from-brand-100 via-cream-200 to-accent-100 opacity-70 blur-2xl" aria-hidden="true" />
+                <div className="absolute -bottom-4 -right-4 h-2/3 w-3/4 rounded-[36px] bg-accent-500/95" aria-hidden="true" />
                 <div className="relative overflow-hidden rounded-[28px] shadow-[var(--shadow-lift)] border border-white">
                   <Image
                     src="/images/hero.png"
@@ -69,20 +88,29 @@ export default function Home() {
                 </div>
                 <div className="hidden md:flex absolute -bottom-6 -left-6 rounded-2xl bg-white shadow-[var(--shadow-lift)] p-4 items-center gap-3 max-w-xs">
                   <div className="h-11 w-11 rounded-full bg-accent-50 grid place-items-center text-accent-600">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                      <path d="M12 2v20M2 12h20" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-                    </svg>
+                    <Star size={20} aria-hidden="true" fill="currentColor" />
                   </div>
                   <div>
-                    <div className="text-sm font-bold text-ink-800">Locally owned</div>
-                    <div className="text-xs text-ink-500">Real neighbors, not a call center.</div>
+                    <div className="text-sm font-bold text-ink-800">Google reviews</div>
+                    <div className="text-xs text-ink-500">Real neighbors, real work.</div>
                   </div>
+                </div>
+                <div className="hidden md:flex absolute -top-4 -right-2 rounded-2xl bg-white shadow-[var(--shadow-lift)] p-3 items-center gap-2">
+                  <div className="h-9 w-9 rounded-full bg-brand-50 text-brand-700 grid place-items-center">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.25" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                      <path d="M12 22s8-4.5 8-11.5A8 8 0 0 0 4 10.5C4 17.5 12 22 12 22z"/>
+                      <circle cx="12" cy="10" r="3"/>
+                    </svg>
+                  </div>
+                  <div className="text-xs font-semibold text-ink-800 pr-1">Licensed & insured</div>
                 </div>
               </div>
             </Reveal>
           </div>
         </div>
       </section>
+
+      <TrustBar />
 
       {/* QUOTE FORM */}
       <Section id="quote" bg="cream" padded>
@@ -95,14 +123,20 @@ export default function Home() {
             />
             <div className="rounded-3xl bg-white p-6 shadow-[var(--shadow-soft)]">
               <div className="text-sm text-ink-500 mb-1">Talk to a person</div>
-              <a href={business.telHref} className="text-3xl font-bold text-brand-800 hover:text-brand-900">
+              <a href={business.telHref} className="text-3xl font-bold text-brand-800 hover:text-brand-900 tracking-tight">
                 {business.phone}
               </a>
               <div className="mt-2 text-sm text-ink-500">{business.hours}</div>
-              <div className="mt-4 flex gap-2">
-                <a href={business.telHref} className="inline-flex items-center gap-2 rounded-full bg-accent-500 text-white px-4 py-2 text-sm font-semibold">Call</a>
-                <a href={business.smsHref} className="inline-flex items-center gap-2 rounded-full bg-brand-700 text-white px-4 py-2 text-sm font-semibold">Text</a>
-                <a href={business.emailHref} className="inline-flex items-center gap-2 rounded-full bg-white border border-ink-100 text-ink-700 px-4 py-2 text-sm font-semibold">Email</a>
+              <div className="mt-4 flex gap-2 flex-wrap">
+                <a href={business.telHref} className="inline-flex items-center gap-2 rounded-full bg-accent-500 hover:bg-accent-600 text-white px-4 py-2 text-sm font-semibold">
+                  <Phone size={14} aria-hidden="true" /> Call
+                </a>
+                <a href={business.smsHref} className="inline-flex items-center gap-2 rounded-full bg-brand-700 hover:bg-brand-800 text-white px-4 py-2 text-sm font-semibold">
+                  <MessageSquare size={14} aria-hidden="true" /> Text
+                </a>
+                <a href={business.emailHref} className="inline-flex items-center gap-2 rounded-full bg-white border border-ink-100 hover:border-ink-200 text-ink-700 px-4 py-2 text-sm font-semibold">
+                  <Mail size={14} aria-hidden="true" /> Email
+                </a>
               </div>
             </div>
           </Reveal>
@@ -122,40 +156,24 @@ export default function Home() {
         />
         <div className="grid gap-5 md:gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {services.map((s, i) => {
-            const locationForService = locationPages.find(
-              (p) => p.service === s.slug && p.citySlug === "birmingham",
-            );
-            const primaryHref = locationForService?.path;
+            const Icon = iconFor(s.slug);
+            const primaryHref = birminghamPathForService(s.slug);
             return (
               <Reveal key={s.slug} delay={Math.min(i * 0.04, 0.3)}>
-                <Card className="p-6 h-full flex flex-col" as="article">
-                  <div id={`service-${s.slug}`} className="h-16 w-16 rounded-2xl bg-brand-50 grid place-items-center mb-4">
-                    <Image
-                      src={s.icon}
-                      alt=""
-                      width={48}
-                      height={48}
-                      className="h-12 w-12 object-contain"
-                    />
+                <Card className="group p-6 h-full flex flex-col relative overflow-hidden" as="article">
+                  <div id={`service-${s.slug}`} className="h-14 w-14 rounded-2xl bg-brand-50 text-brand-700 grid place-items-center mb-4 transition-colors group-hover:bg-accent-500 group-hover:text-white">
+                    <Icon size={26} strokeWidth={2.1} aria-hidden="true" />
                   </div>
-                  <h3 className="text-xl font-bold text-ink-800">{s.name}</h3>
+                  <h3 className="text-xl font-bold text-ink-800 font-display tracking-tight">{s.name}</h3>
                   <p className="mt-2 text-sm text-ink-500 flex-1">{s.blurb}</p>
                   <div className="mt-5 flex items-center justify-between gap-3">
-                    {primaryHref ? (
-                      <Link
-                        href={primaryHref}
-                        className="text-brand-700 font-semibold text-sm hover:text-brand-900"
-                      >
-                        Learn more →
-                      </Link>
-                    ) : (
-                      <Link
-                        href="/contact"
-                        className="text-brand-700 font-semibold text-sm hover:text-brand-900"
-                      >
-                        Get a quote →
-                      </Link>
-                    )}
+                    <Link
+                      href={primaryHref}
+                      className="inline-flex items-center gap-1 text-brand-700 font-semibold text-sm hover:text-brand-900 group-hover:gap-2 transition-all"
+                    >
+                      Learn more
+                      <ArrowUpRight size={14} aria-hidden="true" />
+                    </Link>
                     <a
                       href={business.telHref}
                       className="text-xs font-semibold rounded-full bg-accent-50 text-accent-700 px-3 py-1.5 hover:bg-accent-100"
@@ -163,6 +181,7 @@ export default function Home() {
                       Call
                     </a>
                   </div>
+                  <span aria-hidden className="absolute left-6 right-6 bottom-0 h-0.5 bg-accent-500 origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-300" />
                 </Card>
               </Reveal>
             );
@@ -188,7 +207,7 @@ export default function Home() {
             <SectionHeader
               eyebrow="Why Birmingham chooses J&F"
               title="Your neighbors, not a national call center."
-              intro="We&apos;re Jacorie and Felicia. We built J&F Haul so folks in Birmingham can have a junk-removal team that actually shows up, prices fairly, and treats your home like their own."
+              intro="We're Jacorie and Felicia. We built J&F Haul so folks in Birmingham can have a junk-removal team that actually shows up, prices fairly, and treats your home like their own."
             />
             <div className="grid gap-4 sm:grid-cols-2">
               {[
@@ -199,7 +218,9 @@ export default function Home() {
               ].map((v) => (
                 <div key={v.t} className="rounded-2xl bg-white p-5 shadow-[var(--shadow-soft)]">
                   <div className="h-9 w-9 rounded-lg bg-accent-50 text-accent-600 grid place-items-center mb-3">
-                    <CheckIcon />
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                      <path d="M20 6L9 17l-5-5" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
                   </div>
                   <div className="font-semibold text-ink-800">{v.t}</div>
                   <div className="text-sm text-ink-500 mt-1">{v.b}</div>
@@ -210,27 +231,30 @@ export default function Home() {
         </div>
       </Section>
 
-      {/* HOW IT WORKS */}
-      <Section bg="white">
-        <SectionHeader
-          eyebrow="How it works"
-          title="Six simple steps from clutter to clear."
-          centered
-        />
-        <ol className="grid gap-5 md:grid-cols-3 lg:grid-cols-6">
-          {howItWorks.map((step, i) => (
-            <Reveal key={step.title} delay={Math.min(i * 0.05, 0.3)} as="li">
-              <div className="rounded-3xl bg-white border border-ink-100 p-6 h-full">
-                <div className="h-10 w-10 rounded-full bg-accent-500 text-white font-bold grid place-items-center mb-4">
-                  {i + 1}
+      {/* HOW IT WORKS - dark band */}
+      <section className="bg-brand-800 text-white relative overflow-hidden">
+        <div className="container-x py-16 md:py-24 relative">
+          <SectionHeader
+            eyebrow="How it works"
+            title="Six simple steps from clutter to clear."
+            centered
+            tone="dark"
+          />
+          <ol className="grid gap-5 md:grid-cols-3 lg:grid-cols-6 steps-connector">
+            {howItWorks.map((step, i) => (
+              <Reveal key={step.title} delay={Math.min(i * 0.05, 0.3)} as="li">
+                <div className="relative z-10 rounded-3xl bg-white/[0.05] backdrop-blur border border-white/10 p-6 h-full">
+                  <div className="h-11 w-11 rounded-full bg-accent-500 text-white font-black grid place-items-center text-lg mb-4 shadow-[0_10px_20px_rgba(225,45,36,0.35)]">
+                    {i + 1}
+                  </div>
+                  <div className="font-semibold text-white">{step.title}</div>
+                  <div className="text-sm text-white/70 mt-1">{step.body}</div>
                 </div>
-                <div className="font-semibold text-ink-800">{step.title}</div>
-                <div className="text-sm text-ink-500 mt-1">{step.body}</div>
-              </div>
-            </Reveal>
-          ))}
-        </ol>
-      </Section>
+              </Reveal>
+            ))}
+          </ol>
+        </div>
+      </section>
 
       {/* SERVICE AREAS */}
       <Section bg="cream">
@@ -242,11 +266,11 @@ export default function Home() {
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {cities.map((c) => {
             const cityPages = locationPages.filter((p) => p.citySlug === c.slug);
-            const primary = cityPages[0];
+            const primary = primaryPathForCity(c.slug);
             return (
               <Reveal key={c.slug}>
                 <Card className="p-6 h-full">
-                  <div className="text-2xl font-bold text-ink-800">{c.name}, {c.state}</div>
+                  <div className="text-2xl font-bold text-ink-800 font-display tracking-tight">{c.name}, {c.state}</div>
                   <ul className="mt-3 space-y-1.5">
                     {cityPages.slice(0, 4).map((p) => {
                       const svc = services.find((s) => s.slug === p.service);
@@ -259,14 +283,13 @@ export default function Home() {
                       );
                     })}
                   </ul>
-                  {primary && (
-                    <Link
-                      href={primary.path}
-                      className="mt-5 inline-flex items-center gap-1 text-sm font-semibold text-accent-600 hover:text-accent-700"
-                    >
-                      See {c.name} services →
-                    </Link>
-                  )}
+                  <Link
+                    href={primary}
+                    className="mt-5 inline-flex items-center gap-1 text-sm font-semibold text-accent-600 hover:text-accent-700"
+                  >
+                    See {c.name} services
+                    <ArrowUpRight size={14} aria-hidden="true" />
+                  </Link>
                 </Card>
               </Reveal>
             );
@@ -274,43 +297,50 @@ export default function Home() {
         </div>
       </Section>
 
-      {/* TESTIMONIALS PLACEHOLDER */}
+      {/* REVIEWS — honest, no fabricated content */}
       <Section bg="white">
         <SectionHeader
-          eyebrow="What neighbors say"
-          title="Reviews from folks we've helped."
-          intro="Google reviews from our Birmingham customers. Want to see more? Search &lsquo;J&F Junk removal&rsquo; on Google."
+          eyebrow="Reviews"
+          title="Read what neighbors say. Add your own."
+          intro="We don't invent testimonials. If we’ve helped you, we’d love to hear about it on Google — and if you’re looking for a read before you book, that’s the place to go."
           centered
         />
-        <div className="grid gap-5 md:grid-cols-3">
-          {[1, 2, 3].map((i) => (
-            <Reveal key={i} delay={i * 0.05}>
-              <Card className="p-6 h-full">
-                <div className="flex text-accent-500" aria-label="Five stars">
-                  {[0, 1, 2, 3, 4].map((s) => (
-                    <StarIcon key={s} />
-                  ))}
-                </div>
-                <p className="mt-3 text-ink-700">
-                  {[
-                    "“Showed up same day, quoted fairly, and hauled a load of furniture out of a second-floor apartment without a scratch. Jacorie and the crew were kind and quick.”",
-                    "“We had my mom&rsquo;s estate to clear and J&F handled it with so much care. They donated what could be donated and swept up when they were done.”",
-                    "“Called Tuesday morning, they were in my driveway that afternoon. Old hot tub gone. Priced honestly. I&rsquo;ll be recommending them to everyone.”",
-                  ][i - 1]}
-                </p>
-                <div className="mt-4 text-sm text-ink-500">— A Birmingham neighbor</div>
-              </Card>
-            </Reveal>
-          ))}
-        </div>
-        <div className="mt-8 text-center">
+
+        {realReviews.length > 0 && (
+          <div className="grid gap-5 md:grid-cols-3">
+            {realReviews.map((r, i) => (
+              <Reveal key={i} delay={i * 0.05}>
+                <Card className="p-6 h-full">
+                  <div className="flex text-accent-500" aria-label={`${r.rating ?? 5} out of 5 stars`}>
+                    {Array.from({ length: r.rating ?? 5 }).map((_, s) => (
+                      <Star key={s} size={18} fill="currentColor" strokeWidth={0} />
+                    ))}
+                  </div>
+                  <p className="mt-3 text-ink-700">{r.text}</p>
+                  <div className="mt-4 text-sm text-ink-500">— {r.author}</div>
+                </Card>
+              </Reveal>
+            ))}
+          </div>
+        )}
+
+        <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
           <a
             href="https://www.google.com/search?q=J%26F+Junk+removal+Birmingham"
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 rounded-full bg-white border border-ink-100 hover:border-brand-300 px-5 py-2.5 font-semibold text-brand-800"
           >
-            Read more on Google →
+            Read reviews on Google
+            <ArrowUpRight size={14} aria-hidden="true" />
+          </a>
+          <a
+            href="https://www.google.com/search?q=J%26F+Junk+removal+Birmingham"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 rounded-full bg-accent-500 hover:bg-accent-600 text-white px-5 py-2.5 font-semibold"
+          >
+            Leave us a review
           </a>
         </div>
       </Section>
@@ -328,7 +358,7 @@ export default function Home() {
               href={business.telHref}
               className="inline-flex items-center gap-2 rounded-full bg-accent-500 hover:bg-accent-600 text-white font-semibold px-6 py-3.5"
             >
-              <PhoneIcon /> Still have a question? Call us
+              <Phone size={18} aria-hidden="true" /> Still have a question? Call us
             </a>
           </Reveal>
           <Reveal delay={0.1}>
@@ -338,13 +368,14 @@ export default function Home() {
       </Section>
 
       {/* FINAL CTA */}
-      <section className="bg-brand-800 text-white">
-        <div className="container-x py-16 md:py-24 text-center">
+      <section className="bg-brand-800 text-white relative overflow-hidden">
+        <div className="container-x py-16 md:py-24 text-center relative">
           <Reveal>
-            <h2 className="text-3xl md:text-5xl font-bold [text-wrap:balance]">
+            <Kicker tone="cream">Ready when you are</Kicker>
+            <h2 className="mt-4 font-display font-black tracking-[-0.02em] text-white leading-[1.05] [text-wrap:balance] text-[clamp(2rem,5vw,3.5rem)]">
               Ready to reclaim your space?
             </h2>
-            <p className="mt-4 text-brand-100 text-lg max-w-2xl mx-auto">
+            <p className="mt-4 text-white/80 text-lg max-w-2xl mx-auto">
               Free upfront quotes. Same-day when we can. Real neighbors, real service — right here in Birmingham.
             </p>
             <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
@@ -352,16 +383,16 @@ export default function Home() {
                 href={business.telHref}
                 className="inline-flex items-center gap-2 rounded-full bg-accent-500 hover:bg-accent-600 px-7 py-4 text-lg font-semibold shadow-[var(--shadow-lift)]"
               >
-                <PhoneIcon /> Call {business.phone}
+                <Phone size={18} aria-hidden="true" /> Call {business.phone}
               </a>
               <a
                 href={business.smsHref}
                 className="inline-flex items-center gap-2 rounded-full bg-white/10 hover:bg-white/20 border border-white/30 px-7 py-4 text-lg font-semibold"
               >
-                Text us instead
+                <MessageSquare size={18} aria-hidden="true" /> Text us instead
               </a>
               <Link
-                href="#quote"
+                href="/contact"
                 className="inline-flex items-center gap-2 rounded-full bg-white text-brand-800 px-7 py-4 text-lg font-semibold"
               >
                 Get a free quote
@@ -371,27 +402,5 @@ export default function Home() {
         </div>
       </section>
     </>
-  );
-}
-
-function PhoneIcon() {
-  return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-      <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-    </svg>
-  );
-}
-function CheckIcon() {
-  return (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-      <path d="M20 6L9 17l-5-5" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
-    </svg>
-  );
-}
-function StarIcon() {
-  return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-      <path d="M12 2l2.9 6.9L22 10l-5.5 4.7L18 22l-6-3.5L6 22l1.5-7.3L2 10l7.1-1.1L12 2z"/>
-    </svg>
   );
 }

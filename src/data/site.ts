@@ -155,3 +155,63 @@ export const locationPages: LocationPage[] = [
 export function serviceBySlug(slug: string): Service | undefined {
   return services.find((s) => s.slug === slug);
 }
+
+/** Lowercase singular form of the service name, used in sentences. */
+const singularOverrides: Record<string, string> = {
+  "junk-removal": "junk removal",
+  "furniture-removal": "furniture removal",
+  "mattress-removal": "mattress removal",
+  "appliance-removal": "appliance removal",
+  "hot-tub-removal": "hot tub removal",
+  "shed-removal": "shed removal",
+  "property-cleanouts": "property cleanout",
+  "house-cleanouts": "house cleanout",
+  "garage-cleanouts": "garage cleanout",
+  "estate-cleanouts": "estate cleanout",
+  "hoarder-cleanouts": "hoarder cleanout",
+  "eviction-cleanouts": "eviction cleanout",
+  "apartment-cleanouts": "apartment cleanout",
+  "office-cleanouts": "office cleanout",
+  "valet-trash": "valet trash",
+};
+
+/** True when the service is a countable event (a/an X). False = mass noun. */
+const countableSlugs = new Set([
+  "property-cleanouts",
+  "house-cleanouts",
+  "garage-cleanouts",
+  "estate-cleanouts",
+  "hoarder-cleanouts",
+  "eviction-cleanouts",
+  "apartment-cleanouts",
+  "office-cleanouts",
+]);
+
+export function serviceSingularName(slug: string): string {
+  return singularOverrides[slug] ?? slug.replace(/-/g, " ");
+}
+
+export function articleFor(phrase: string): "a" | "an" {
+  const first = phrase.trim().split(/\s+/)[0]?.toLowerCase() ?? "";
+  return /^[aeiou]/.test(first) ? "an" : "a";
+}
+
+/** Sentence-safe service reference — "an office cleanout" or "junk removal". */
+export function serviceInSentence(slug: string): string {
+  const name = serviceSingularName(slug);
+  if (!countableSlugs.has(slug)) return name;
+  return `${articleFor(name)} ${name}`;
+}
+
+/** Returns the primary Birmingham landing page for a service, or /contact. */
+export function birminghamPathForService(slug: string): string {
+  return (
+    locationPages.find((p) => p.service === slug && p.citySlug === "birmingham")?.path ??
+    "/contact"
+  );
+}
+
+/** Returns the primary landing page for a city (first in list). */
+export function primaryPathForCity(citySlug: string): string {
+  return locationPages.find((p) => p.citySlug === citySlug)?.path ?? "/contact";
+}

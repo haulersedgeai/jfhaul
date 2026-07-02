@@ -1,26 +1,42 @@
 import Image from "next/image";
 import Link from "next/link";
+import { Phone, ArrowUpRight, Check } from "lucide-react";
 import {
   business,
   howItWorks,
   locationPages,
   serviceBySlug,
+  serviceInSentence,
+  serviceSingularName,
   type LocationPage,
 } from "@/data/site";
+import { iconFor } from "@/data/serviceIcons";
 import { landingCopy, landingFAQ } from "@/data/landingContent";
 import { Section, SectionHeader } from "@/components/ui/Section";
 import { Card } from "@/components/ui/Card";
-import { Badge } from "@/components/ui/Badge";
+import { Kicker } from "@/components/ui/Kicker";
 import { Reveal } from "@/components/site/Reveal";
 import { QuoteForm } from "@/components/site/QuoteForm";
 import { FAQAccordion } from "@/components/site/FAQAccordion";
 import { FAQSchema, ServiceSchema } from "@/components/site/StructuredData";
+import { TrustBar } from "@/components/site/TrustBar";
+
+function capitalize(word: string): string {
+  if (!word) return word;
+  return word.charAt(0).toUpperCase() + word.slice(1);
+}
 
 export function LocationLanding({ page }: { page: LocationPage }) {
   const service = serviceBySlug(page.service);
   const { c, s } = landingCopy(page);
   const faqs = landingFAQ(page);
   const canonical = `${business.siteUrl}${page.path}`;
+  const Icon = iconFor(page.service);
+
+  const singular = serviceSingularName(page.service); // "office cleanout"
+  const inSentence = serviceInSentence(page.service); // "an office cleanout" / "junk removal"
+  const singularTitle = singular.split(" ").map(capitalize).join(" "); // "Office Cleanout"
+  const cityState = `${page.city}, AL`;
 
   const otherServicesInCity = locationPages
     .filter((p) => p.citySlug === page.citySlug && p.path !== page.path)
@@ -34,30 +50,33 @@ export function LocationLanding({ page }: { page: LocationPage }) {
       <FAQSchema items={faqs} />
       <ServiceSchema
         serviceName={service?.name ?? page.title}
-        areaServed={`${page.city}, AL`}
+        areaServed={cityState}
         url={canonical}
-        description={`${service?.name ?? page.title} in ${page.city}, Alabama — provided by ${business.legalName}.`}
+        description={`${service?.name ?? page.title} in ${cityState} — provided by ${business.legalName}.`}
       />
 
       {/* HERO */}
-      <section className="relative overflow-hidden bg-gradient-to-b from-cream-50 to-cream-100">
-        <div className="container-x pt-10 md:pt-14 pb-10 md:pb-16">
+      <section className="relative overflow-hidden bg-gradient-to-b from-cream-50 to-white">
+        <div className="hero-arch" aria-hidden="true" />
+        <div className="grain absolute inset-0" aria-hidden="true" />
+        <div className="container-x pt-10 md:pt-14 pb-12 md:pb-16 relative">
           <nav aria-label="Breadcrumb" className="text-sm text-ink-400 mb-4">
             <Link href="/" className="hover:text-brand-800">Home</Link>
             <span aria-hidden="true"> · </span>
-            <span className="text-ink-700">{page.city}, AL</span>
+            <span className="text-ink-700">{cityState}</span>
             <span aria-hidden="true"> · </span>
             <span className="text-ink-700">{service?.name ?? page.title}</span>
           </nav>
           <div className="grid gap-10 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] items-center">
             <Reveal eager>
-              <div className="flex flex-wrap gap-2 mb-4">
-                <Badge tone="accent">Same-day in {page.city}</Badge>
-                <Badge tone="brand">Licensed &amp; insured</Badge>
-                <Badge tone="neutral">Family + woman-owned</Badge>
-              </div>
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-[1.05] tracking-tight text-ink-800 [text-wrap:balance]">
-                {service?.name ?? page.title} in <span className="text-brand-700">{page.city}, AL</span>
+              <Kicker>
+                <span className="inline-flex items-center gap-2">
+                  <Icon size={14} aria-hidden="true" />
+                  Serving {cityState}
+                </span>
+              </Kicker>
+              <h1 className="mt-4 font-display font-black tracking-[-0.025em] text-ink-800 leading-[1.02] [text-wrap:balance] text-[clamp(2.5rem,6vw,4.5rem)]">
+                {service?.name ?? page.title} in <span className="text-brand-700">{cityState}</span>
               </h1>
               <p className="mt-5 text-lg md:text-xl text-ink-500 max-w-xl [text-wrap:pretty]">
                 {c.intro}
@@ -66,27 +85,29 @@ export function LocationLanding({ page }: { page: LocationPage }) {
                 {s.hook} {s.who}
               </p>
               <div className="mt-7 flex flex-wrap items-center gap-3">
-                <a
-                  href={business.telHref}
-                  className="inline-flex items-center gap-2 rounded-full bg-accent-500 hover:bg-accent-600 text-white font-semibold px-6 py-4 text-lg shadow-[var(--shadow-lift)]"
-                >
-                  <PhoneIcon /> Call {business.phone}
-                </a>
                 <Link
                   href="#quote"
-                  className="inline-flex items-center gap-2 rounded-full bg-white border border-brand-100 hover:border-brand-300 text-brand-800 px-6 py-4 text-lg font-semibold"
+                  className="inline-flex items-center gap-2 rounded-full bg-accent-500 hover:bg-accent-600 text-white font-semibold px-6 py-4 text-lg shadow-[var(--shadow-lift)]"
                 >
                   Get a free quote
+                  <ArrowUpRight size={18} aria-hidden="true" />
                 </Link>
+                <a
+                  href={business.telHref}
+                  className="inline-flex items-center gap-2 rounded-full bg-white border border-brand-100 hover:border-brand-300 text-brand-800 px-6 py-4 text-lg font-semibold"
+                >
+                  <Phone size={18} aria-hidden="true" /> Call {business.phone}
+                </a>
               </div>
             </Reveal>
             <Reveal eager delay={0.1}>
               <div className="relative">
-                <div className="absolute -inset-6 rounded-[36px] bg-gradient-to-br from-brand-100 to-accent-100 blur-2xl opacity-60" aria-hidden="true" />
+                <div className="absolute -inset-x-4 -inset-y-6 rounded-[36px] bg-gradient-to-br from-brand-100 via-cream-200 to-accent-100 opacity-70 blur-2xl" aria-hidden="true" />
+                <div className="absolute -bottom-4 -right-4 h-2/3 w-3/4 rounded-[36px] bg-accent-500/95" aria-hidden="true" />
                 <div className="relative overflow-hidden rounded-[28px] shadow-[var(--shadow-lift)] border border-white">
                   <Image
                     src="/images/hero.png"
-                    alt={`${service?.name ?? page.title} crew working in ${page.city}, AL`}
+                    alt={`${service?.name ?? page.title} crew working in ${cityState}`}
                     width={1200}
                     height={800}
                     fetchPriority="high"
@@ -100,6 +121,8 @@ export function LocationLanding({ page }: { page: LocationPage }) {
         </div>
       </section>
 
+      <TrustBar />
+
       {/* SERVICE DETAILS */}
       <Section bg="white">
         <div className="grid gap-10 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] items-start">
@@ -107,13 +130,13 @@ export function LocationLanding({ page }: { page: LocationPage }) {
             <SectionHeader
               eyebrow={`In ${page.city}`}
               title={s.h2}
-              intro={`Here's what a typical ${service?.name.toLowerCase() ?? "job"} job in ${page.city} looks like when you call J&F.`}
+              intro={`Here’s what ${inSentence} in ${page.city} typically looks like when you call J&F.`}
             />
             <ul className="space-y-3">
               {s.what.map((item) => (
                 <li key={item} className="flex items-start gap-3 rounded-2xl bg-cream-50 p-4">
                   <div className="mt-0.5 h-8 w-8 rounded-lg bg-accent-50 text-accent-600 grid place-items-center shrink-0">
-                    <CheckIcon />
+                    <Check size={16} strokeWidth={2.5} aria-hidden="true" />
                   </div>
                   <div className="text-ink-700">{item}</div>
                 </li>
@@ -137,51 +160,55 @@ export function LocationLanding({ page }: { page: LocationPage }) {
         </div>
       </Section>
 
-      {/* HOW IT WORKS */}
-      <Section bg="cream">
-        <SectionHeader
-          eyebrow="How it works"
-          title={`Booking ${service?.name ?? page.title} in ${page.city} is simple.`}
-          centered
-        />
-        <ol className="grid gap-5 md:grid-cols-3 lg:grid-cols-6">
-          {howItWorks.map((step, i) => (
-            <Reveal key={step.title} delay={Math.min(i * 0.05, 0.3)} as="li">
-              <div className="rounded-3xl bg-white border border-ink-100 p-6 h-full">
-                <div className="h-10 w-10 rounded-full bg-brand-700 text-white font-bold grid place-items-center mb-4">
-                  {i + 1}
+      {/* HOW IT WORKS — dark band */}
+      <section className="bg-brand-800 text-white relative overflow-hidden">
+        <div className="container-x py-16 md:py-20 relative">
+          <SectionHeader
+            eyebrow="How it works"
+            title={`Booking ${singularTitle} in ${page.city} is simple.`}
+            centered
+            tone="dark"
+          />
+          <ol className="grid gap-5 md:grid-cols-3 lg:grid-cols-6 steps-connector">
+            {howItWorks.map((step, i) => (
+              <Reveal key={step.title} delay={Math.min(i * 0.05, 0.3)} as="li">
+                <div className="relative z-10 rounded-3xl bg-white/[0.05] backdrop-blur border border-white/10 p-6 h-full">
+                  <div className="h-11 w-11 rounded-full bg-accent-500 text-white font-black grid place-items-center text-lg mb-4 shadow-[0_10px_20px_rgba(225,45,36,0.35)]">
+                    {i + 1}
+                  </div>
+                  <div className="font-semibold text-white">{step.title}</div>
+                  <div className="text-sm text-white/70 mt-1">{step.body}</div>
                 </div>
-                <div className="font-semibold text-ink-800">{step.title}</div>
-                <div className="text-sm text-ink-500 mt-1">{step.body}</div>
-              </div>
-            </Reveal>
-          ))}
-        </ol>
-      </Section>
+              </Reveal>
+            ))}
+          </ol>
+        </div>
+      </section>
 
       {/* CITY-SPECIFIC CTA */}
-      <section className="bg-brand-800 text-white">
+      <section className="bg-gradient-to-b from-cream-100 to-white">
         <div className="container-x py-14 md:py-20">
           <div className="grid gap-8 md:grid-cols-2 items-center">
             <Reveal>
-              <h2 className="text-3xl md:text-4xl font-bold">
+              <Kicker>Local & fast</Kicker>
+              <h2 className="mt-4 font-display font-black tracking-[-0.02em] text-ink-800 leading-[1.05] text-[clamp(2rem,4.5vw,3rem)]">
                 Need us in {page.city} today?
               </h2>
-              <p className="mt-3 text-brand-100 max-w-xl">
-                Call or text {business.phone} and we&apos;ll do our best to fit you in. Same-day is often possible when we have a truck rolling nearby.
+              <p className="mt-3 text-ink-500 max-w-xl text-lg">
+                Call or text {business.phone} and we’ll do our best to fit you in. Same-day is often possible when we have a truck rolling nearby.
               </p>
             </Reveal>
             <Reveal delay={0.1} className="md:justify-self-end">
               <div className="flex flex-wrap gap-3">
                 <a
                   href={business.telHref}
-                  className="inline-flex items-center gap-2 rounded-full bg-accent-500 hover:bg-accent-600 px-6 py-4 text-lg font-semibold shadow-[var(--shadow-lift)]"
+                  className="inline-flex items-center gap-2 rounded-full bg-accent-500 hover:bg-accent-600 text-white px-6 py-4 text-lg font-semibold shadow-[var(--shadow-lift)]"
                 >
-                  <PhoneIcon /> Call {business.phone}
+                  <Phone size={18} aria-hidden="true" /> Call {business.phone}
                 </a>
                 <a
                   href={business.smsHref}
-                  className="inline-flex items-center gap-2 rounded-full bg-white/10 hover:bg-white/20 border border-white/30 px-6 py-4 text-lg font-semibold"
+                  className="inline-flex items-center gap-2 rounded-full bg-brand-700 hover:bg-brand-800 text-white px-6 py-4 text-lg font-semibold"
                 >
                   Text us
                 </a>
@@ -197,8 +224,8 @@ export function LocationLanding({ page }: { page: LocationPage }) {
           <Reveal>
             <SectionHeader
               eyebrow="FAQ"
-              title={`${page.city} ${service?.name.toLowerCase() ?? "junk removal"} questions`}
-              intro={`The most common things folks ask us before booking a ${service?.name.toLowerCase() ?? "junk removal"} job in ${page.city}.`}
+              title={`${page.city} ${singular} questions`}
+              intro={`The most common things folks ask us before booking ${inSentence} in ${page.city}.`}
             />
           </Reveal>
           <Reveal delay={0.1}>
@@ -211,7 +238,7 @@ export function LocationLanding({ page }: { page: LocationPage }) {
       <Section bg="cream">
         <div className="grid gap-8 md:grid-cols-2">
           <Card className="p-6 md:p-8">
-            <div className="text-xs font-semibold uppercase tracking-widest text-accent-600 mb-2">Other services in {page.city}</div>
+            <div className="text-xs font-bold uppercase tracking-[0.18em] text-accent-600 mb-3">Other services in {page.city}</div>
             <ul className="grid gap-2 sm:grid-cols-2">
               {otherServicesInCity.map((p) => {
                 const svc = serviceBySlug(p.service);
@@ -230,7 +257,7 @@ export function LocationLanding({ page }: { page: LocationPage }) {
           </Card>
           {sameServiceOtherCities.length > 0 && (
             <Card className="p-6 md:p-8">
-              <div className="text-xs font-semibold uppercase tracking-widest text-accent-600 mb-2">
+              <div className="text-xs font-bold uppercase tracking-[0.18em] text-accent-600 mb-3">
                 {service?.name ?? page.title} in other cities
               </div>
               <ul className="grid gap-2 sm:grid-cols-2">
@@ -247,20 +274,5 @@ export function LocationLanding({ page }: { page: LocationPage }) {
         </div>
       </Section>
     </>
-  );
-}
-
-function PhoneIcon() {
-  return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-      <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-    </svg>
-  );
-}
-function CheckIcon() {
-  return (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-      <path d="M20 6L9 17l-5-5" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
-    </svg>
   );
 }
