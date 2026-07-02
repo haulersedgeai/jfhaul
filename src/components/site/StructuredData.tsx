@@ -1,4 +1,5 @@
-import { business, cities, faqs, socials } from "@/data/site";
+import { business, cities, faqs, serviceAreas, socials } from "@/data/site";
+import { reviewStats } from "@/data/reviews";
 
 /**
  * Organization / LocalBusiness JSON-LD injected in the root layout.
@@ -30,10 +31,17 @@ export function OrganizationSchema() {
       latitude: business.geo.lat,
       longitude: business.geo.lng,
     },
-    areaServed: cities.map((c) => ({
-      "@type": "City",
-      name: `${c.name}, ${c.state}`,
-    })),
+    areaServed: [
+      ...cities.map((c) => ({ "@type": "City", name: `${c.name}, ${c.state}` })),
+      ...serviceAreas.map((a) => ({ "@type": "City", name: `${a.name}, ${a.state}` })),
+    ],
+    aggregateRating: {
+      "@type": "AggregateRating",
+      ratingValue: reviewStats.rating,
+      reviewCount: reviewStats.count,
+      bestRating: 5,
+      worstRating: 1,
+    },
     openingHoursSpecification: business.hoursStructured.map((h) => ({
       "@type": "OpeningHoursSpecification",
       dayOfWeek: h.days,

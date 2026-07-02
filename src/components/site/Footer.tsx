@@ -11,19 +11,24 @@ import {
 
 export function Footer() {
   const year = new Date().getFullYear();
+  const half = Math.ceil(services.length / 2);
+  const servicesA = services.slice(0, half);
+  const servicesB = services.slice(half);
+
   return (
     <footer className="bg-ink-800 text-ink-100 mt-24">
       <div className="container-x py-14 md:py-20">
-        <div className="grid gap-10 md:gap-12 md:grid-cols-2 lg:grid-cols-4">
-          {/* Col 1 — logo + blurb + socials */}
-          <div>
-            <div className="inline-flex items-center justify-center rounded-2xl bg-white p-4 shadow-[0_10px_30px_rgba(0,0,0,0.25)]">
+        <div className="grid gap-10 md:gap-12 md:grid-cols-2 lg:grid-cols-6 lg:items-start">
+          {/* Col 1 — Logo + blurb + socials */}
+          <div className="lg:col-span-2">
+            <div className="inline-flex items-center justify-center rounded-2xl bg-white p-5 shadow-[0_10px_30px_rgba(0,0,0,0.25)]">
               <Image
                 src="/images/logo.png"
                 alt={`${business.name} logo`}
-                width={220}
-                height={72}
-                className="h-16 md:h-20 w-auto object-contain"
+                width={280}
+                height={280}
+                sizes="(min-width: 1024px) 260px, 220px"
+                className="w-56 md:w-64 h-auto object-contain"
               />
             </div>
             <p className="mt-5 text-sm text-ink-200 leading-relaxed max-w-xs">
@@ -38,26 +43,40 @@ export function Footer() {
             </div>
           </div>
 
-          {/* Col 2 — Services */}
-          <div>
-            <h3 className="text-white text-sm font-semibold uppercase tracking-widest mb-4">Services</h3>
-            <ul className="space-y-2">
-              {services.map((s) => (
-                <li key={s.slug}>
-                  <Link
-                    href={birminghamPathForService(s.slug)}
-                    className="text-ink-200 hover:text-white text-sm"
-                  >
-                    {s.name}
-                  </Link>
-                </li>
-              ))}
-            </ul>
+          {/* Cols 2–3 — Services (split into two columns) */}
+          <div className="lg:col-span-2">
+            <FooterHeading>Services</FooterHeading>
+            <div className="grid grid-cols-2 gap-x-6 gap-y-2">
+              <ul className="space-y-2">
+                {servicesA.map((s) => (
+                  <li key={s.slug}>
+                    <Link
+                      href={birminghamPathForService(s.slug)}
+                      className="text-ink-200 hover:text-white text-sm"
+                    >
+                      {s.name}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+              <ul className="space-y-2">
+                {servicesB.map((s) => (
+                  <li key={s.slug}>
+                    <Link
+                      href={birminghamPathForService(s.slug)}
+                      className="text-ink-200 hover:text-white text-sm"
+                    >
+                      {s.name}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
 
-          {/* Col 3 — Service Areas */}
+          {/* Col 4 — Service Areas + Company */}
           <div>
-            <h3 className="text-white text-sm font-semibold uppercase tracking-widest mb-4">Service areas</h3>
+            <FooterHeading>Service areas</FooterHeading>
             <ul className="space-y-2">
               {cities.map((c) => (
                 <li key={c.slug}>
@@ -67,28 +86,32 @@ export function Footer() {
                 </li>
               ))}
             </ul>
-            <h3 className="text-white text-sm font-semibold uppercase tracking-widest mt-8 mb-3">Company</h3>
-            <ul className="space-y-2">
-              <li><Link href="/about" className="text-ink-200 hover:text-white text-sm">About</Link></li>
-              <li><Link href="/contact" className="text-ink-200 hover:text-white text-sm">Contact</Link></li>
-            </ul>
+            <div className="mt-8">
+              <FooterHeading>Company</FooterHeading>
+              <ul className="space-y-2">
+                <li><Link href="/about" className="text-ink-200 hover:text-white text-sm">About</Link></li>
+                <li><Link href="/reviews" className="text-ink-200 hover:text-white text-sm">Reviews</Link></li>
+                <li><Link href="/service-areas" className="text-ink-200 hover:text-white text-sm">Service areas</Link></li>
+                <li><Link href="/contact" className="text-ink-200 hover:text-white text-sm">Contact</Link></li>
+              </ul>
+            </div>
           </div>
 
-          {/* Col 4 — Contact */}
+          {/* Col 5 — Contact */}
           <div>
-            <h3 className="text-white text-sm font-semibold uppercase tracking-widest mb-4">Contact</h3>
+            <FooterHeading>Contact</FooterHeading>
             <ul className="space-y-4 text-sm">
               <li>
                 <a href={business.telHref} className="text-white text-xl font-bold hover:text-accent-300">
                   {business.phone}
                 </a>
-                <div className="mt-1 flex flex-wrap gap-2 text-xs">
+                <div className="mt-2 flex flex-wrap gap-2 text-xs">
                   <a href={business.telHref} className="rounded-full bg-white/10 hover:bg-white/20 px-3 py-1">Call</a>
                   <a href={business.smsHref} className="rounded-full bg-white/10 hover:bg-white/20 px-3 py-1">Text</a>
                 </div>
               </li>
               <li>
-                <a href={business.emailHref} className="text-ink-200 hover:text-white">
+                <a href={business.emailHref} className="text-ink-200 hover:text-white break-all">
                   {business.email}
                 </a>
               </li>
@@ -118,6 +141,14 @@ export function Footer() {
         </div>
       </div>
     </footer>
+  );
+}
+
+function FooterHeading({ children }: { children: React.ReactNode }) {
+  return (
+    <h3 className="text-white text-xs font-semibold uppercase tracking-widest mb-4">
+      {children}
+    </h3>
   );
 }
 

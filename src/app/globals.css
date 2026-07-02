@@ -66,10 +66,12 @@ body {
   text-rendering: optimizeLegibility;
 }
 
-h1, h2, h3, h4, h5 {
-  font-family: var(--font-display);
-  letter-spacing: -0.02em;
-  color: var(--color-ink-800);
+@layer base {
+  h1, h2, h3, h4, h5 {
+    font-family: var(--font-display);
+    letter-spacing: -0.02em;
+    color: var(--color-ink-800);
+  }
 }
 
 /* Focus ring — WCAG AA */

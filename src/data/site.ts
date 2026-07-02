@@ -30,10 +30,10 @@ export const business = {
   smsHref: "sms:2056240731",
   email: "jnf@jfhaul.com",
   emailHref: "mailto:jnf@jfhaul.com",
-  hours: "Mon–Sat, 7am–6pm",
-  hoursShort: "Mon–Sat 7a–6p",
+  hours: "Mon–Sat, 7am–5pm",
+  hoursShort: "Mon–Sat 7a–5p",
   hoursStructured: [
-    { days: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"], opens: "07:00", closes: "18:00" },
+    { days: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"], opens: "07:00", closes: "17:00" },
   ],
   addressCity: "Birmingham",
   addressState: "AL",
@@ -56,7 +56,7 @@ export const socials = {
   instagram: "https://www.instagram.com/jf_hauljunk/",
   youtube: "https://www.youtube.com/@jnfjunkremoval",
   tiktok: "https://www.tiktok.com/@jnfjunkremoval",
-  googleSearch: "https://www.google.com/search?q=J%26F+Junk+removal",
+  googleSearch: "https://share.google/nqcibJQzOrCUiFtAX",
 } as const;
 
 export const cities = [
@@ -65,6 +65,46 @@ export const cities = [
   { slug: "hoover", name: "Hoover", state: "AL" },
   { slug: "vestavia-hills", name: "Vestavia Hills", state: "AL" },
 ] as const;
+
+/**
+ * Additional towns served — 37-mile radius of Calera, AL.
+ * Each renders at /junk-removal-[slug]-al as a surface-level hub.
+ * The four primary cities (Birmingham, Hoover, Vestavia Hills, Trussville) are
+ * intentionally NOT included here — they already have their own landing pages.
+ */
+export type ServiceArea = { slug: string; name: string; state: "AL" };
+export const serviceAreas: ServiceArea[] = [
+  { slug: "calera", name: "Calera", state: "AL" },
+  { slug: "alabaster", name: "Alabaster", state: "AL" },
+  { slug: "pelham", name: "Pelham", state: "AL" },
+  { slug: "helena", name: "Helena", state: "AL" },
+  { slug: "montevallo", name: "Montevallo", state: "AL" },
+  { slug: "columbiana", name: "Columbiana", state: "AL" },
+  { slug: "chelsea", name: "Chelsea", state: "AL" },
+  { slug: "harpersville", name: "Harpersville", state: "AL" },
+  { slug: "wilsonville", name: "Wilsonville", state: "AL" },
+  { slug: "vincent", name: "Vincent", state: "AL" },
+  { slug: "bessemer", name: "Bessemer", state: "AL" },
+  { slug: "hueytown", name: "Hueytown", state: "AL" },
+  { slug: "homewood", name: "Homewood", state: "AL" },
+  { slug: "mountain-brook", name: "Mountain Brook", state: "AL" },
+  { slug: "irondale", name: "Irondale", state: "AL" },
+  { slug: "leeds", name: "Leeds", state: "AL" },
+  { slug: "moody", name: "Moody", state: "AL" },
+  { slug: "center-point", name: "Center Point", state: "AL" },
+  { slug: "pinson", name: "Pinson", state: "AL" },
+  { slug: "gardendale", name: "Gardendale", state: "AL" },
+  { slug: "fultondale", name: "Fultondale", state: "AL" },
+  { slug: "adamsville", name: "Adamsville", state: "AL" },
+  { slug: "clanton", name: "Clanton", state: "AL" },
+  { slug: "jemison", name: "Jemison", state: "AL" },
+  { slug: "thorsby", name: "Thorsby", state: "AL" },
+  { slug: "woodstock", name: "Woodstock", state: "AL" },
+];
+
+export function serviceAreaPath(slug: string): string {
+  return `/junk-removal-${slug}-al`;
+}
 
 export const services: Service[] = [
   { slug: "junk-removal", name: "Junk Removal", blurb: "Big or small, we clear away unwanted items quickly and safely.", icon: "/images/icon-junk-removal.png" },
@@ -136,6 +176,10 @@ export const locationPages: LocationPage[] = [
   { path: "/estate-cleanouts-birmingham-al", service: "estate-cleanouts", city: "Birmingham", citySlug: "birmingham", title: "Estate Cleanouts in Birmingham, AL" },
   { path: "/apartment-cleanouts-birmingham--al", service: "apartment-cleanouts", city: "Birmingham", citySlug: "birmingham", title: "Apartment Cleanouts in Birmingham, AL" },
   { path: "/office-cleanout-birmingham-al", service: "office-cleanouts", city: "Birmingham", citySlug: "birmingham", title: "Office Cleanouts in Birmingham, AL" },
+  { path: "/mattress-removal-birmingham-al", service: "mattress-removal", city: "Birmingham", citySlug: "birmingham", title: "Mattress Removal in Birmingham, AL" },
+  { path: "/property-cleanouts-birmingham-al", service: "property-cleanouts", city: "Birmingham", citySlug: "birmingham", title: "Property Cleanouts in Birmingham, AL" },
+  { path: "/house-cleanouts-birmingham-al", service: "house-cleanouts", city: "Birmingham", citySlug: "birmingham", title: "House Cleanouts in Birmingham, AL" },
+  { path: "/valet-trash-birmingham-al", service: "valet-trash", city: "Birmingham", citySlug: "birmingham", title: "Valet Trash in Birmingham, AL" },
 
   { path: "/estate-cleanouts-in-trussville-al", service: "estate-cleanouts", city: "Trussville", citySlug: "trussville", title: "Estate Cleanouts in Trussville, AL" },
   { path: "/junk-removal-in-trussville-al", service: "junk-removal", city: "Trussville", citySlug: "trussville", title: "Junk Removal in Trussville, AL" },

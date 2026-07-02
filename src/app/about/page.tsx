@@ -39,7 +39,7 @@ export default function AboutPage() {
               </p>
               <div className="mt-7 flex flex-wrap items-center gap-3">
                 <Link
-                  href="/contact"
+                  href="/book"
                   className="inline-flex items-center gap-2 rounded-full bg-accent-500 hover:bg-accent-600 text-white font-semibold px-6 py-4 text-lg shadow-[var(--shadow-lift)]"
                 >
                   Get a free quote
@@ -74,42 +74,68 @@ export default function AboutPage() {
 
       {/* OUR STORY */}
       <Section bg="white">
-        <div className="grid gap-10 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] items-start">
+        <SectionHeader
+          eyebrow="Our story"
+          title="Meet Jacorie and Felicia"
+        />
+        <div className="grid gap-10 lg:gap-14 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] items-start">
           <Reveal>
-            <SectionHeader
-              eyebrow="Our story"
-              title="Built by a family that hauls together."
-            />
-            <p className="text-ink-700 leading-relaxed">
-              We started J&F because Birmingham didn’t need another out-of-town franchise — it needed a crew that answers the phone, quotes honestly, and finishes the job right. As a family-owned and woman-owned business, we take that personally.
-            </p>
-            <p className="mt-4 text-ink-700 leading-relaxed">
-              Every quote we give is upfront. Every crew that shows up wears our name. And every truckload that leaves your driveway goes to the right place — donated when it can be, recycled where possible, and disposed of responsibly when there’s no other option.
-            </p>
-            <p className="mt-4 text-ink-700 leading-relaxed">
-              We’re licensed and insured, we live in the community we serve, and we’d rather earn one repeat customer than sell one high-priced job. That’s the whole idea.
-            </p>
+            <div className="relative lg:sticky lg:top-24">
+              <div className="absolute -inset-6 rounded-[36px] bg-gradient-to-br from-brand-100 to-accent-100 blur-2xl opacity-60" aria-hidden="true" />
+              <div className="relative overflow-hidden rounded-[28px] shadow-[var(--shadow-lift)] border border-white">
+                <Image
+                  src="/about-us-photo.jpeg"
+                  alt="Jacorie and Felicia, owners of J&F Haul and Deliver"
+                  width={1200}
+                  height={1500}
+                  sizes="(min-width: 1024px) 480px, 100vw"
+                  className="w-full h-auto object-cover"
+                />
+              </div>
+            </div>
           </Reveal>
 
           <Reveal delay={0.1}>
-            <div className="grid gap-4 sm:grid-cols-2">
-              <Image
-                src="/images/team-1.jpg"
-                alt="Felicia loading up the J&F trailer"
-                width={800}
-                height={800}
-                sizes="(min-width: 640px) 260px, 100vw"
-                className="rounded-3xl w-full h-auto object-cover shadow-[var(--shadow-soft)]"
-              />
-              <Image
-                src="/images/team-2.jpg"
-                alt="The J&F crew after a Birmingham cleanout"
-                width={800}
-                height={800}
-                sizes="(min-width: 640px) 260px, 100vw"
-                className="rounded-3xl w-full h-auto object-cover shadow-[var(--shadow-soft)] sm:mt-8"
-              />
-              <div className="sm:col-span-2 rounded-3xl bg-cream-50 border border-black/[0.04] p-6">
+            <div className="max-w-[65ch] text-ink-700 leading-relaxed text-lg space-y-5">
+              <p>
+                Hey! We&rsquo;re Jacorie and Felicia, the husband-and-wife team behind J&amp;F Haul and Deliver.
+              </p>
+              <p>
+                Our story started long before the business did. We met in middle school, grew up together, and have been building a life side by side ever since. If you see one of us, chances are you&rsquo;ll see the other &mdash; we&rsquo;re partners in life, best friends, and now business owners.
+              </p>
+              <p>
+                We have three amazing children who are our biggest motivation. Everything we do is for them, and they&rsquo;re the reason we give this business everything we&rsquo;ve got every single day.
+              </p>
+              <p>
+                Funny enough, owning a junk removal company wasn&rsquo;t something we dreamed about growing up. For seven years, we both worked traditional jobs &mdash; until everything changed. While we were away on vacation, we were both laid off. At first it was devastating. We didn&rsquo;t know what came next. But instead of letting that moment define us, we made a decision that would change our lives forever: we bet on ourselves.
+              </p>
+
+              <blockquote className="not-italic border-l-4 border-accent-500 pl-5 md:pl-6 py-2 my-2 font-display font-bold text-ink-800 text-[clamp(1.35rem,2.5vw,1.85rem)] leading-snug [text-wrap:balance]">
+                That&rsquo;s how J&amp;F Haul and Deliver was born.
+              </blockquote>
+
+              <p>
+                We chose junk removal because it lets us serve people every single day. Every job is different, every customer has a story, and every cleanout is a chance to make someone&rsquo;s life a little easier. Whether we&rsquo;re helping a family clear out a loved one&rsquo;s estate, cleaning up after a move, hauling away years of clutter, or keeping apartment communities clean, we know we&rsquo;re making a real difference.
+              </p>
+
+              <blockquote className="not-italic border-l-4 border-accent-500 pl-5 md:pl-6 py-2 my-2 font-display font-bold text-ink-800 text-[clamp(1.35rem,2.5vw,1.85rem)] leading-snug [text-wrap:balance]">
+                To us, we&rsquo;re not just a junk removal company &mdash; we&rsquo;re neighbors helping neighbors.
+              </blockquote>
+
+              <p>
+                We believe in treating every customer the way we&rsquo;d want our own family treated: with honesty, respect, professionalism, and genuine care. Building relationships means just as much to us as removing junk.
+              </p>
+              <p>
+                When we&rsquo;re not working, you&rsquo;ll usually find us spending time with our kids, going to church, enjoying family movie nights at the theater, or simply making memories together. That same family-first mindset carries into how we serve every customer.
+              </p>
+              <p>
+                Thank you for trusting our family with your home, your property, and your project. We look forward to serving our community for many years to come.
+              </p>
+              <p className="font-semibold text-ink-800">
+                From our family to yours &mdash; thank you for supporting J&amp;F Haul and Deliver.
+              </p>
+
+              <div className="mt-8 rounded-3xl bg-cream-50 border border-black/[0.04] p-6">
                 <div className="text-xs font-bold uppercase tracking-[0.18em] text-accent-600">What we believe</div>
                 <ul className="mt-3 grid gap-2 sm:grid-cols-2">
                   {trustPoints.map((t) => (
@@ -162,7 +188,7 @@ export default function AboutPage() {
             <a href={business.telHref} className="inline-flex items-center gap-2 rounded-full bg-accent-500 hover:bg-accent-600 text-white font-semibold px-7 py-4 text-lg shadow-[var(--shadow-lift)]">
               <Phone size={18} aria-hidden="true" /> {business.phone}
             </a>
-            <Link href="/contact" className="inline-flex items-center gap-2 rounded-full bg-brand-700 hover:bg-brand-800 text-white font-semibold px-7 py-4 text-lg">
+            <Link href="/book" className="inline-flex items-center gap-2 rounded-full bg-brand-700 hover:bg-brand-800 text-white font-semibold px-7 py-4 text-lg">
               Get a free quote
             </Link>
           </div>

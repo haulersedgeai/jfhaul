@@ -6,12 +6,10 @@ import { ChevronDown, Menu, Phone, X } from "lucide-react";
 import {
   birminghamPathForService,
   business,
-  cities,
-  primaryPathForCity,
   services,
 } from "@/data/site";
 
-type MenuKey = "services" | "areas" | null;
+type MenuKey = "services" | null;
 
 export function Header() {
   const [scrolled, setScrolled] = useState(false);
@@ -81,25 +79,13 @@ export function Header() {
             </div>
           </NavDropdown>
 
-          <NavDropdown
-            label="Service Areas"
-            open={menu === "areas"}
-            onToggle={() => setMenu(menu === "areas" ? null : "areas")}
-          >
-            <div className="p-3 min-w-[260px] flex flex-col gap-1">
-              {cities.map((c) => (
-                <Link
-                  key={c.slug}
-                  href={primaryPathForCity(c.slug)}
-                  onClick={() => setMenu(null)}
-                  className="px-3 py-2 rounded-lg text-sm text-ink-700 hover:bg-brand-50 hover:text-brand-800"
-                >
-                  {c.name}, {c.state}
-                </Link>
-              ))}
-            </div>
-          </NavDropdown>
+          <NavLink href="/service-areas" onClick={() => setMenu(null)}>
+            Service Areas
+          </NavLink>
 
+          <NavLink href="/reviews" onClick={() => setMenu(null)}>
+            Reviews
+          </NavLink>
           <NavLink href="/about" onClick={() => setMenu(null)}>
             About
           </NavLink>
@@ -115,7 +101,7 @@ export function Header() {
             {business.phone}
           </a>
           <Link
-            href="/contact"
+            href="/book"
             className="inline-flex items-center gap-2 rounded-full bg-accent-500 hover:bg-accent-600 px-5 py-2.5 text-white font-semibold shadow-[var(--shadow-soft)] transition"
           >
             Get a Quote
@@ -174,7 +160,7 @@ export function Header() {
                 Call {business.phone}
               </a>
               <Link
-                href="/contact"
+                href="/book"
                 onClick={() => setOpen(false)}
                 className="inline-flex items-center justify-center gap-2 rounded-full bg-accent-500 px-5 py-3 text-white font-semibold"
               >
@@ -296,26 +282,21 @@ function MobileNav({ onNavigate }: { onNavigate: () => void }) {
         </ul>
       </details>
 
-      <details className="group px-3 py-2 rounded-xl bg-cream-50">
-        <summary className="cursor-pointer list-none flex items-center justify-between font-bold text-ink-800 text-lg">
-          Service Areas
-          <ChevronDown size={16} className="transition group-open:rotate-180" aria-hidden="true" />
-        </summary>
-        <ul className="mt-2 space-y-1 pl-1">
-          {cities.map((c) => (
-            <li key={c.slug}>
-              <Link
-                href={primaryPathForCity(c.slug)}
-                onClick={onNavigate}
-                className="block px-3 py-2 rounded-lg text-ink-700 hover:bg-brand-50 hover:text-brand-800"
-              >
-                {c.name}, {c.state}
-              </Link>
-            </li>
-          ))}
-        </ul>
-      </details>
+      <Link
+        href="/service-areas"
+        onClick={onNavigate}
+        className="block px-4 py-3 rounded-xl bg-cream-50 font-bold text-ink-800 text-lg hover:bg-brand-50 hover:text-brand-800"
+      >
+        Service Areas
+      </Link>
 
+      <Link
+        href="/reviews"
+        onClick={onNavigate}
+        className="block px-4 py-3 rounded-xl bg-cream-50 font-bold text-ink-800 text-lg hover:bg-brand-50 hover:text-brand-800"
+      >
+        Reviews
+      </Link>
       <Link
         href="/about"
         onClick={onNavigate}

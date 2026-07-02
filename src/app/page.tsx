@@ -9,8 +9,8 @@ import {
   locationPages,
   primaryPathForCity,
   services,
-  trustPoints,
 } from "@/data/site";
+import { featuredReviews, reviewStats } from "@/data/reviews";
 import { iconFor } from "@/data/serviceIcons";
 import { Section, SectionHeader } from "@/components/ui/Section";
 import { Card } from "@/components/ui/Card";
@@ -20,11 +20,8 @@ import { QuoteForm } from "@/components/site/QuoteForm";
 import { FAQAccordion } from "@/components/site/FAQAccordion";
 import { FAQSchema } from "@/components/site/StructuredData";
 import { TrustBar } from "@/components/site/TrustBar";
+import { ReviewCard } from "@/components/site/ReviewCard";
 import { ArrowUpRight, Phone, Star, MessageSquare, Mail } from "lucide-react";
-
-// PLACEHOLDER: paste real Google reviews here when ready. Leave empty to hide the block gracefully.
-// Each entry: { author: string, text: string, rating?: 1-5 }
-const realReviews: { author: string; text: string; rating?: number }[] = [];
 
 export default function Home() {
   return (
@@ -60,14 +57,6 @@ export default function Home() {
                   <Phone size={18} aria-hidden="true" /> Call or text {business.phone}
                 </a>
               </div>
-              <ul className="mt-7 flex flex-wrap gap-x-6 gap-y-2 text-sm text-ink-500">
-                {trustPoints.slice(0, 4).map((t) => (
-                  <li key={t} className="flex items-center gap-2">
-                    <span aria-hidden className="h-1.5 w-1.5 rounded-full bg-accent-500" />
-                    {t}
-                  </li>
-                ))}
-              </ul>
             </Reveal>
 
             <Reveal eager delay={0.1}>
@@ -86,15 +75,27 @@ export default function Home() {
                     className="w-full h-auto"
                   />
                 </div>
-                <div className="hidden md:flex absolute -bottom-6 -left-6 rounded-2xl bg-white shadow-[var(--shadow-lift)] p-4 items-center gap-3 max-w-xs">
-                  <div className="h-11 w-11 rounded-full bg-accent-50 grid place-items-center text-accent-600">
+                <a
+                  href={reviewStats.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hidden md:flex absolute -bottom-6 -left-6 rounded-2xl bg-white shadow-[var(--shadow-lift)] p-4 items-center gap-3 max-w-xs hover:shadow-[0_20px_40px_rgba(15,93,107,0.15)] transition"
+                  aria-label={`${reviewStats.rating.toFixed(1)} out of 5 based on ${reviewStats.count} Google reviews`}
+                >
+                  <div className="h-11 w-11 rounded-full bg-accent-50 grid place-items-center text-accent-600 shrink-0">
                     <Star size={20} aria-hidden="true" fill="currentColor" />
                   </div>
                   <div>
-                    <div className="text-sm font-bold text-ink-800">Google reviews</div>
-                    <div className="text-xs text-ink-500">Real neighbors, real work.</div>
+                    <div className="flex text-accent-500" aria-hidden="true">
+                      {Array.from({ length: 5 }).map((_, i) => (
+                        <Star key={i} size={14} fill="currentColor" strokeWidth={0} />
+                      ))}
+                    </div>
+                    <div className="mt-1 text-sm font-bold text-ink-800">
+                      {reviewStats.rating.toFixed(1)} · {reviewStats.count} Google reviews
+                    </div>
                   </div>
-                </div>
+                </a>
                 <div className="hidden md:flex absolute -top-4 -right-2 rounded-2xl bg-white shadow-[var(--shadow-lift)] p-3 items-center gap-2">
                   <div className="h-9 w-9 rounded-full bg-brand-50 text-brand-700 grid place-items-center">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.25" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -297,51 +298,50 @@ export default function Home() {
         </div>
       </Section>
 
-      {/* REVIEWS — honest, no fabricated content */}
+      {/* REVIEWS */}
       <Section bg="white">
-        <SectionHeader
-          eyebrow="Reviews"
-          title="Read what neighbors say. Add your own."
-          intro="We don't invent testimonials. If we’ve helped you, we’d love to hear about it on Google — and if you’re looking for a read before you book, that’s the place to go."
-          centered
-        />
+        <div className="grid gap-10 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] items-start">
+          <Reveal>
+            <Kicker>Reviews</Kicker>
+            <div className="mt-4 font-display font-black text-ink-800 leading-none text-[clamp(4rem,10vw,7rem)]">
+              {reviewStats.rating.toFixed(1)}
+            </div>
+            <div className="mt-2 flex text-accent-500" aria-label={`${reviewStats.rating} out of 5 stars`}>
+              {Array.from({ length: 5 }).map((_, i) => (
+                <Star key={i} size={24} fill="currentColor" strokeWidth={0} />
+              ))}
+            </div>
+            <p className="mt-3 text-ink-500 text-lg">
+              Based on <span className="font-semibold text-ink-800">{reviewStats.count} Google reviews</span>
+              {" "}— plus more on Facebook and Networx.
+            </p>
+            <div className="mt-6 flex flex-wrap gap-3">
+              <a
+                href={reviewStats.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 rounded-full bg-accent-500 hover:bg-accent-600 text-white px-5 py-2.5 font-semibold"
+              >
+                Read on Google
+                <ArrowUpRight size={14} aria-hidden="true" />
+              </a>
+              <Link
+                href="/reviews"
+                className="inline-flex items-center gap-2 rounded-full bg-white border border-ink-100 hover:border-brand-300 px-5 py-2.5 font-semibold text-brand-800"
+              >
+                Read all reviews
+                <ArrowUpRight size={14} aria-hidden="true" />
+              </Link>
+            </div>
+          </Reveal>
 
-        {realReviews.length > 0 && (
-          <div className="grid gap-5 md:grid-cols-3">
-            {realReviews.map((r, i) => (
-              <Reveal key={i} delay={i * 0.05}>
-                <Card className="p-6 h-full">
-                  <div className="flex text-accent-500" aria-label={`${r.rating ?? 5} out of 5 stars`}>
-                    {Array.from({ length: r.rating ?? 5 }).map((_, s) => (
-                      <Star key={s} size={18} fill="currentColor" strokeWidth={0} />
-                    ))}
-                  </div>
-                  <p className="mt-3 text-ink-700">{r.text}</p>
-                  <div className="mt-4 text-sm text-ink-500">— {r.author}</div>
-                </Card>
+          <div className="grid gap-5 sm:grid-cols-2">
+            {featuredReviews.slice(0, 4).map((r, i) => (
+              <Reveal key={r.name} delay={i * 0.05}>
+                <ReviewCard review={r} />
               </Reveal>
             ))}
           </div>
-        )}
-
-        <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
-          <a
-            href="https://www.google.com/search?q=J%26F+Junk+removal+Birmingham"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 rounded-full bg-white border border-ink-100 hover:border-brand-300 px-5 py-2.5 font-semibold text-brand-800"
-          >
-            Read reviews on Google
-            <ArrowUpRight size={14} aria-hidden="true" />
-          </a>
-          <a
-            href="https://www.google.com/search?q=J%26F+Junk+removal+Birmingham"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 rounded-full bg-accent-500 hover:bg-accent-600 text-white px-5 py-2.5 font-semibold"
-          >
-            Leave us a review
-          </a>
         </div>
       </Section>
 
