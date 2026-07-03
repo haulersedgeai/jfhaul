@@ -118,6 +118,7 @@ export function LocationLanding({ page }: { page: LocationPage }) {
                     alt={`${service?.name ?? page.title} crew working in ${cityState}`}
                     width={1200}
                     height={800}
+                    loading="eager"
                     fetchPriority="high"
                     sizes="(min-width: 1024px) 560px, 100vw"
                     className="w-full h-auto"

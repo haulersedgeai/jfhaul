@@ -1,10 +1,20 @@
 "use client";
 
-import { useActionState } from "react";
-import { submitQuote, type QuoteState } from "@/app/actions/quote";
+import { useState, type FormEvent } from "react";
 import { services, business } from "@/data/site";
 
-const initial: QuoteState = { status: "idle" };
+// Web3Forms access key comes from NEXT_PUBLIC_WEB3FORMS_KEY.
+// Swap the client's key by updating that env var — no code change needed.
+const WEB3FORMS_KEY =
+  process.env.NEXT_PUBLIC_WEB3FORMS_KEY || "YOUR_WEB3FORMS_ACCESS_KEY";
+
+const PHONE_RE = /^[+()\d\s.\-]{7,}$/;
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+type Status = "idle" | "success" | "error";
+type FieldErrors = Partial<
+  Record<"name" | "phone" | "email" | "message" | "service", string>
+>;
 
 export function QuoteForm({
   variant = "card",
@@ -21,14 +31,96 @@ export function QuoteForm({
   defaultCity?: string;
   source?: string;
 }) {
-  const [state, formAction, pending] = useActionState(submitQuote, initial);
+  const [status, setStatus] = useState<Status>("idle");
+  const [pending, setPending] = useState(false);
+  const [message, setMessageState] = useState<string>("");
+  const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
+
+  const [name, setName] = useState("");
+  const [phone, setPhone] = useState("");
+  const [email, setEmail] = useState("");
+  const [service, setService] = useState(defaultService ?? "");
+  const [address, setAddress] = useState(defaultCity ? `${defaultCity}, AL` : "");
+  const [messageBody, setMessageBody] = useState("");
 
   const wrapper =
     variant === "card"
       ? "rounded-3xl bg-white p-6 md:p-8 shadow-[var(--shadow-lift)] border border-black/[0.04]"
       : "";
 
-  if (state.status === "success") {
+  async function onSubmit(e: FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+
+    // Honeypot — bail silently if a bot fills these.
+    const form = e.currentTarget;
+    const botcheck = (form.elements.namedItem("botcheck") as HTMLInputElement | null)?.value;
+    const website = (form.elements.namedItem("website") as HTMLInputElement | null)?.value;
+    if (botcheck || website) {
+      setStatus("success");
+      setMessageState("Thanks! We'll be in touch shortly.");
+      return;
+    }
+
+    const errors: FieldErrors = {};
+    const trimmedName = name.trim();
+    const trimmedPhone = phone.trim();
+    const trimmedEmail = email.trim();
+    if (!trimmedName) errors.name = "Please enter your name.";
+    if (!trimmedPhone) errors.phone = "We need a phone number to quote you.";
+    else if (!PHONE_RE.test(trimmedPhone)) errors.phone = "That doesn't look like a valid phone.";
+    if (trimmedEmail && !EMAIL_RE.test(trimmedEmail)) errors.email = "Please enter a valid email.";
+
+    if (Object.keys(errors).length > 0) {
+      setFieldErrors(errors);
+      setStatus("error");
+      setMessageState("Please fix the highlighted fields and try again.");
+      return;
+    }
+
+    setFieldErrors({});
+    setPending(true);
+    setStatus("idle");
+    setMessageState("");
+
+    try {
+      const res = await fetch("https://api.web3forms.com/submit", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({
+          access_key: WEB3FORMS_KEY,
+          subject: "New Quote Request — J&F Haul and Deliver",
+          from_name: "J&F Website",
+          replyto: trimmedEmail || undefined,
+          name: trimmedName,
+          phone: trimmedPhone,
+          email: trimmedEmail,
+          service,
+          address: address.trim(),
+          message: messageBody.trim(),
+          source,
+        }),
+      });
+      const data = await res.json().catch(() => null);
+      if (res.ok && data?.success) {
+        setStatus("success");
+        setMessageState("Thanks! We got your request and will call or text you shortly.");
+      } else {
+        throw new Error(data?.message || "send-failed");
+      }
+    } catch {
+      setStatus("error");
+      setMessageState(
+        `Something went wrong sending your request. Please call us at ${business.phone}.`
+      );
+    } finally {
+      setPending(false);
+    }
+  }
+
+  if (status === "success") {
     return (
       <div className={wrapper}>
         <div className="flex items-center gap-3">
@@ -39,7 +131,7 @@ export function QuoteForm({
           </div>
           <div>
             <div className="text-lg font-semibold text-ink-800">Request received</div>
-            <div className="text-ink-500 text-sm">{state.message}</div>
+            <div className="text-ink-500 text-sm">{message}</div>
           </div>
         </div>
         <div className="mt-5 text-sm text-ink-500">
@@ -54,7 +146,7 @@ export function QuoteForm({
   }
 
   return (
-    <form action={formAction} className={wrapper} noValidate>
+    <form onSubmit={onSubmit} className={wrapper} noValidate>
       {(heading || intro) && (
         <div className="mb-5">
           {heading && <h3 className="text-2xl font-bold text-ink-800">{heading}</h3>}
@@ -63,16 +155,27 @@ export function QuoteForm({
       )}
 
       <input type="hidden" name="source" value={source} />
-      {/* honeypot */}
+      {/* honeypots — bots fill these; humans never see them */}
       <div className="absolute -left-[9999px] w-px h-px overflow-hidden" aria-hidden="true">
         <label>
           Website
           <input type="text" name="website" tabIndex={-1} autoComplete="off" />
         </label>
+        <label>
+          Do not fill
+          <input type="checkbox" name="botcheck" tabIndex={-1} />
+        </label>
       </div>
 
       <div className="grid gap-4 md:grid-cols-2">
-        <Field label="Your name" name="name" required error={state.fieldErrors?.name} />
+        <Field
+          label="Your name"
+          name="name"
+          required
+          value={name}
+          onChange={setName}
+          error={fieldErrors.name}
+        />
         <Field
           label="Phone"
           name="phone"
@@ -80,20 +183,25 @@ export function QuoteForm({
           required
           autoComplete="tel"
           inputMode="tel"
-          error={state.fieldErrors?.phone}
+          value={phone}
+          onChange={setPhone}
+          error={fieldErrors.phone}
         />
         <Field
           label="Email (optional)"
           name="email"
           type="email"
           autoComplete="email"
-          error={state.fieldErrors?.email}
+          value={email}
+          onChange={setEmail}
+          error={fieldErrors.email}
         />
         <div>
           <label className="block text-sm font-semibold text-ink-700 mb-1">Service</label>
           <select
             name="service"
-            defaultValue={defaultService ?? ""}
+            value={service}
+            onChange={(e) => setService(e.target.value)}
             className="w-full rounded-xl border border-ink-100 bg-white px-4 py-3 text-ink-800 focus:border-brand-500"
           >
             <option value="">What do you need done?</option>
@@ -107,7 +215,8 @@ export function QuoteForm({
         <Field
           label="Address or area"
           name="address"
-          defaultValue={defaultCity ? `${defaultCity}, AL` : ""}
+          value={address}
+          onChange={setAddress}
           className="md:col-span-2"
           placeholder="Street or neighborhood in Birmingham, Trussville, Hoover, or Vestavia Hills"
         />
@@ -116,15 +225,17 @@ export function QuoteForm({
           <textarea
             name="message"
             rows={4}
+            value={messageBody}
+            onChange={(e) => setMessageBody(e.target.value)}
             placeholder="e.g. Old couch and mattress in a 2nd-floor apartment, need it gone this week."
             className="w-full rounded-xl border border-ink-100 bg-white px-4 py-3 text-ink-800 focus:border-brand-500 resize-y"
           />
         </div>
       </div>
 
-      {state.status === "error" && state.message && (
+      {status === "error" && message && (
         <div className="mt-4 rounded-xl bg-accent-50 text-accent-800 border border-accent-100 px-4 py-3 text-sm">
-          {state.message}
+          {message}
         </div>
       )}
 
@@ -160,7 +271,8 @@ function Field({
   placeholder,
   autoComplete,
   inputMode,
-  defaultValue,
+  value,
+  onChange,
 }: {
   label: string;
   name: string;
@@ -171,7 +283,8 @@ function Field({
   placeholder?: string;
   autoComplete?: string;
   inputMode?: "text" | "tel" | "email" | "numeric" | "decimal" | "search" | "url";
-  defaultValue?: string;
+  value: string;
+  onChange: (v: string) => void;
 }) {
   return (
     <div className={className}>
@@ -186,7 +299,8 @@ function Field({
         placeholder={placeholder}
         autoComplete={autoComplete}
         inputMode={inputMode}
-        defaultValue={defaultValue}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
         aria-invalid={error ? true : undefined}
         className={`w-full rounded-xl border bg-white px-4 py-3 text-ink-800 focus:border-brand-500 ${
           error ? "border-accent-400" : "border-ink-100"

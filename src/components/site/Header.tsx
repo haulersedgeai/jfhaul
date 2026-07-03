@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { ChevronDown, Menu, Phone, X } from "lucide-react";
@@ -181,19 +182,26 @@ function Wordmark({
   size?: "sm" | "md";
   onClick?: () => void;
 }) {
-  const cls =
+  const heightCls =
     size === "sm"
-      ? "text-lg md:text-xl"
-      : "text-xl md:text-[1.4rem]";
+      ? "h-10"
+      : "h-11 md:h-14";
   return (
     <Link
       href="/"
       onClick={onClick}
-      className={`font-display font-black tracking-tight text-ink-800 hover:text-brand-800 ${cls}`}
+      className="inline-flex items-center shrink-0"
       aria-label={`${business.name} — home`}
     >
-      J<span className="text-accent-500">&</span>F Haul{" "}
-      <span className="text-ink-500 font-semibold">& Deliver</span>
+      <Image
+        src="/images/logo-update.png"
+        alt="J&F Haul and Deliver — Junk Removal"
+        width={2047}
+        height={1798}
+        fetchPriority={size === "sm" ? "auto" : "high"}
+        sizes="(min-width: 768px) 160px, 120px"
+        className={`${heightCls} w-auto`}
+      />
     </Link>
   );
 }

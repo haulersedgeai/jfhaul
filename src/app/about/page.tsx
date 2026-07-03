@@ -61,6 +61,7 @@ export default function AboutPage() {
                     alt="The J&F Haul truck loaded up and ready for a job in Birmingham, AL"
                     width={1200}
                     height={800}
+                    loading="eager"
                     fetchPriority="high"
                     sizes="(min-width: 1024px) 560px, 100vw"
                     className="w-full h-auto"

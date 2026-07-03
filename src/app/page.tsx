@@ -64,15 +64,20 @@ export default function Home() {
                 {/* Accent block behind photo */}
                 <div className="absolute -inset-x-4 -inset-y-6 rounded-[36px] bg-gradient-to-br from-brand-100 via-cream-200 to-accent-100 opacity-70 blur-2xl" aria-hidden="true" />
                 <div className="absolute -bottom-4 -right-4 h-2/3 w-3/4 rounded-[36px] bg-accent-500/95" aria-hidden="true" />
-                <div className="relative overflow-hidden rounded-[28px] shadow-[var(--shadow-lift)] border border-white">
+                <div className="relative overflow-hidden rounded-[28px] shadow-[var(--shadow-lift)] border border-white aspect-[4/3] sm:aspect-[3/2]">
                   <Image
-                    src="/images/hero.png"
-                    alt="J&F Haul crew removing junk in Birmingham, AL"
-                    width={1200}
-                    height={800}
+                    src="/images/about-us-update.jpeg"
+                    alt="Jacorie and Felicia, owners of J&F Haul and Deliver"
+                    fill
+                    loading="eager"
                     fetchPriority="high"
                     sizes="(min-width: 1024px) 560px, 100vw"
-                    className="w-full h-auto"
+                    className="object-cover object-[center_28%]"
+                  />
+                  {/* Scrim to keep the Google reviews badge (bottom-left) readable */}
+                  <div
+                    aria-hidden="true"
+                    className="pointer-events-none absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-ink-900/45 via-ink-900/15 to-transparent"
                   />
                 </div>
                 <a
