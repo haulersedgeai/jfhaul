@@ -135,8 +135,16 @@ export function Footer() {
             <Link href="/privacy" className="hover:text-white">Privacy</Link>
           </div>
           <div className="md:text-right">
-            {/* If Adimize provides a URL later, wrap the text in <a href="..."> and remove this comment. */}
-            Powered by Adimize — Local Service Digital Marketing.
+            Powered by{" "}
+            <a
+              href="https://adimize.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-white underline-offset-2 hover:underline"
+            >
+              Adimize
+            </a>
+            {" "}— Local Service Digital Marketing.
           </div>
         </div>
       </div>

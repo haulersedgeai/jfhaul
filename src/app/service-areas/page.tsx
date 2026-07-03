@@ -130,7 +130,7 @@ export default function ServiceAreasPage() {
       <section className="bg-brand-800 text-white">
         <div className="container-x py-14 md:py-20 text-center">
           <Reveal>
-            <h2 className="font-display font-black leading-[1.05] text-[clamp(2rem,4.5vw,3rem)]">
+            <h2 className="font-display font-black text-white leading-[1.05] text-[clamp(2rem,4.5vw,3rem)]">
               One truck. One call. Done today, usually.
             </h2>
             <div className="mt-6 flex flex-wrap gap-3 justify-center">

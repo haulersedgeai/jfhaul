@@ -70,7 +70,9 @@ body {
   h1, h2, h3, h4, h5 {
     font-family: var(--font-display);
     letter-spacing: -0.02em;
-    color: var(--color-ink-800);
+    /* Inherit so headings on dark bands can pick up parent `text-white`.
+       Body sets ink-800 as the default; explicit text-* utilities still win. */
+    color: inherit;
   }
 }
 

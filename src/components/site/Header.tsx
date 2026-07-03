@@ -1,22 +1,27 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
-import { ChevronDown, Menu, Phone, X } from "lucide-react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { ArrowUpRight, ChevronDown, Menu, Phone, X } from "lucide-react";
 import {
   birminghamPathForService,
   business,
+  cities,
+  primaryPathForCity,
   services,
 } from "@/data/site";
 
-type MenuKey = "services" | null;
+type MenuKey = "services" | "service-areas" | null;
+
+const CLOSE_DELAY_MS = 150;
 
 export function Header() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
   const [menu, setMenu] = useState<MenuKey>(null);
+  const [canHover, setCanHover] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
+  const closeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 24);
@@ -30,12 +35,49 @@ export function Header() {
   }, [open]);
 
   useEffect(() => {
+    if (typeof window === "undefined" || !window.matchMedia) return;
+    const mql = window.matchMedia("(hover: hover) and (pointer: fine)");
+    const sync = () => setCanHover(mql.matches);
+    sync();
+    mql.addEventListener?.("change", sync);
+    return () => mql.removeEventListener?.("change", sync);
+  }, []);
+
+  const cancelClose = useCallback(() => {
+    if (closeTimerRef.current) {
+      clearTimeout(closeTimerRef.current);
+      closeTimerRef.current = null;
+    }
+  }, []);
+
+  const scheduleClose = useCallback(() => {
+    cancelClose();
+    closeTimerRef.current = setTimeout(() => setMenu(null), CLOSE_DELAY_MS);
+  }, [cancelClose]);
+
+  const openMenu = useCallback(
+    (key: Exclude<MenuKey, null>) => {
+      cancelClose();
+      setMenu(key);
+    },
+    [cancelClose],
+  );
+
+  useEffect(() => () => cancelClose(), [cancelClose]);
+
+  useEffect(() => {
     if (!menu) return;
     const onClick = (e: MouseEvent) => {
-      if (menuRef.current && !menuRef.current.contains(e.target as Node)) setMenu(null);
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+        cancelClose();
+        setMenu(null);
+      }
     };
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setMenu(null);
+      if (e.key === "Escape") {
+        cancelClose();
+        setMenu(null);
+      }
     };
     document.addEventListener("mousedown", onClick);
     document.addEventListener("keydown", onKey);
@@ -43,7 +85,7 @@ export function Header() {
       document.removeEventListener("mousedown", onClick);
       document.removeEventListener("keydown", onKey);
     };
-  }, [menu]);
+  }, [menu, cancelClose]);
 
   return (
     <header
@@ -62,27 +104,101 @@ export function Header() {
           aria-label="Primary"
         >
           <NavDropdown
+            id="services"
             label="Services"
-            open={menu === "services"}
-            onToggle={() => setMenu(menu === "services" ? null : "services")}
+            href="/services"
+            isOpen={menu === "services"}
+            canHover={canHover}
+            onOpen={() => openMenu("services")}
+            onScheduleClose={scheduleClose}
+            onCancelClose={cancelClose}
+            onNavigate={() => {
+              cancelClose();
+              setMenu(null);
+            }}
           >
-            <div className="p-3 min-w-[560px] grid grid-cols-2 gap-1">
-              {services.map((s) => (
+            <div className="p-3 min-w-[560px]">
+              <div className="grid grid-cols-2 gap-1">
+                {services.map((s) => (
+                  <Link
+                    key={s.slug}
+                    href={birminghamPathForService(s.slug)}
+                    onClick={() => {
+                      cancelClose();
+                      setMenu(null);
+                    }}
+                    className="px-3 py-2 rounded-lg text-sm text-ink-700 hover:bg-brand-50 hover:text-brand-800"
+                    role="menuitem"
+                  >
+                    {s.name}
+                  </Link>
+                ))}
+              </div>
+              <div className="mt-2 pt-2 border-t border-ink-100">
                 <Link
-                  key={s.slug}
-                  href={birminghamPathForService(s.slug)}
-                  onClick={() => setMenu(null)}
-                  className="px-3 py-2 rounded-lg text-sm text-ink-700 hover:bg-brand-50 hover:text-brand-800"
+                  href="/services"
+                  onClick={() => {
+                    cancelClose();
+                    setMenu(null);
+                  }}
+                  className="flex items-center justify-between gap-2 px-3 py-2 rounded-lg text-sm font-semibold text-brand-800 hover:bg-brand-50"
+                  role="menuitem"
                 >
-                  {s.name}
+                  View all services
+                  <ArrowUpRight size={14} aria-hidden="true" />
                 </Link>
-              ))}
+              </div>
             </div>
           </NavDropdown>
 
-          <NavLink href="/service-areas" onClick={() => setMenu(null)}>
-            Service Areas
-          </NavLink>
+          <NavDropdown
+            id="service-areas"
+            label="Service Areas"
+            href="/service-areas"
+            isOpen={menu === "service-areas"}
+            canHover={canHover}
+            onOpen={() => openMenu("service-areas")}
+            onScheduleClose={scheduleClose}
+            onCancelClose={cancelClose}
+            onNavigate={() => {
+              cancelClose();
+              setMenu(null);
+            }}
+          >
+            <div className="p-3 min-w-[280px]">
+              <ul>
+                {cities.map((c) => (
+                  <li key={c.slug}>
+                    <Link
+                      href={primaryPathForCity(c.slug)}
+                      onClick={() => {
+                        cancelClose();
+                        setMenu(null);
+                      }}
+                      className="block px-3 py-2 rounded-lg text-sm text-ink-700 hover:bg-brand-50 hover:text-brand-800"
+                      role="menuitem"
+                    >
+                      {c.name}, {c.state}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+              <div className="mt-2 pt-2 border-t border-ink-100">
+                <Link
+                  href="/service-areas"
+                  onClick={() => {
+                    cancelClose();
+                    setMenu(null);
+                  }}
+                  className="flex items-center justify-between gap-2 px-3 py-2 rounded-lg text-sm font-semibold text-brand-800 hover:bg-brand-50"
+                  role="menuitem"
+                >
+                  All service areas
+                  <ArrowUpRight size={14} aria-hidden="true" />
+                </Link>
+              </div>
+            </div>
+          </NavDropdown>
 
           <NavLink href="/reviews" onClick={() => setMenu(null)}>
             Reviews
@@ -182,26 +298,23 @@ function Wordmark({
   size?: "sm" | "md";
   onClick?: () => void;
 }) {
-  const heightCls =
+  const sizeCls =
     size === "sm"
-      ? "h-10"
-      : "h-11 md:h-14";
+      ? "text-lg md:text-xl"
+      : "text-xl md:text-[1.4rem]";
   return (
     <Link
       href="/"
       onClick={onClick}
-      className="inline-flex items-center shrink-0"
+      className="inline-flex items-baseline gap-2 shrink-0 font-display tracking-tight leading-none"
       aria-label={`${business.name} — home`}
     >
-      <Image
-        src="/images/logo-update.png"
-        alt="J&F Haul and Deliver — Junk Removal"
-        width={2047}
-        height={1798}
-        fetchPriority={size === "sm" ? "auto" : "high"}
-        sizes="(min-width: 768px) 160px, 120px"
-        className={`${heightCls} w-auto`}
-      />
+      <span className={`font-black text-ink-800 ${sizeCls}`}>
+        J<span className="text-accent-500">&amp;</span>F
+      </span>
+      <span className={`font-medium text-ink-500 ${sizeCls}`}>
+        Junk Removal
+      </span>
     </Link>
   );
 }
@@ -227,36 +340,73 @@ function NavLink({
 }
 
 function NavDropdown({
+  id,
   label,
-  open,
-  onToggle,
+  href,
+  isOpen,
+  canHover,
+  onOpen,
+  onScheduleClose,
+  onCancelClose,
+  onNavigate,
   children,
 }: {
+  id: string;
   label: string;
-  open: boolean;
-  onToggle: () => void;
+  href: string;
+  isOpen: boolean;
+  canHover: boolean;
+  onOpen: () => void;
+  onScheduleClose: () => void;
+  onCancelClose: () => void;
+  onNavigate: () => void;
   children: React.ReactNode;
 }) {
+  const panelId = `nav-panel-${id}`;
   return (
-    <div className="relative">
-      <button
-        type="button"
+    <div
+      className="relative"
+      onPointerEnter={(e) => {
+        // Only hover on true pointer devices (mouse/pen), never touch.
+        if (!canHover) return;
+        if (e.pointerType === "touch") return;
+        onOpen();
+      }}
+      onPointerLeave={(e) => {
+        if (!canHover) return;
+        if (e.pointerType === "touch") return;
+        onScheduleClose();
+      }}
+      onFocus={onOpen}
+      onBlur={(e) => {
+        if (!e.currentTarget.contains(e.relatedTarget as Node | null)) {
+          onScheduleClose();
+        }
+      }}
+    >
+      <Link
+        href={href}
+        onClick={onNavigate}
         aria-haspopup="menu"
-        aria-expanded={open}
-        onClick={onToggle}
+        aria-expanded={isOpen}
+        aria-controls={panelId}
         className="inline-flex items-center gap-1 px-3 py-2 rounded-full text-ink-700 hover:text-brand-800 hover:bg-brand-50 font-semibold text-[0.95rem] transition"
       >
         {label}
         <ChevronDown
           size={14}
           aria-hidden="true"
-          className={`transition-transform ${open ? "rotate-180" : ""}`}
+          className={`transition-transform ${isOpen ? "rotate-180" : ""}`}
         />
-      </button>
+      </Link>
       <div
+        id={panelId}
         role="menu"
+        aria-label={label}
+        onPointerEnter={onCancelClose}
+        onPointerLeave={onScheduleClose}
         className={`absolute left-0 top-full pt-2 transition-all ${
-          open ? "opacity-100 visible" : "opacity-0 invisible pointer-events-none"
+          isOpen ? "opacity-100 visible" : "opacity-0 invisible pointer-events-none"
         }`}
       >
         <div className="bg-white rounded-2xl shadow-[var(--shadow-lift)] border border-ink-100">
@@ -287,6 +437,15 @@ function MobileNav({ onNavigate }: { onNavigate: () => void }) {
               </Link>
             </li>
           ))}
+          <li>
+            <Link
+              href="/services"
+              onClick={onNavigate}
+              className="block px-3 py-2 rounded-lg font-semibold text-brand-800 hover:bg-brand-50 text-[0.95rem]"
+            >
+              View all services →
+            </Link>
+          </li>
         </ul>
       </details>
 
