@@ -14,7 +14,7 @@ import {
   DoorOpen,
   Building,
   Briefcase,
-  Trash,
+  PackageOpen,
 } from "lucide-react";
 
 export const serviceIcons: Record<string, LucideIcon> = {
@@ -32,7 +32,7 @@ export const serviceIcons: Record<string, LucideIcon> = {
   "eviction-cleanouts": DoorOpen,
   "apartment-cleanouts": Building,
   "office-cleanouts": Briefcase,
-  "valet-trash": Trash,
+  "warehouse-cleanouts": PackageOpen,
 };
 
 export function iconFor(slug: string): LucideIcon {

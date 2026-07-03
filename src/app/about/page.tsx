@@ -140,9 +140,14 @@ export default function AboutPage() {
                 <div className="text-xs font-bold uppercase tracking-[0.18em] text-accent-600">What we believe</div>
                 <ul className="mt-3 grid gap-2 sm:grid-cols-2">
                   {trustPoints.map((t) => (
-                    <li key={t} className="flex items-start gap-2 text-ink-700">
+                    <li key={t.label} className="flex items-start gap-2 text-ink-700">
                       <span aria-hidden className="mt-2 h-1.5 w-1.5 rounded-full bg-accent-500" />
-                      {t}
+                      <span>
+                        {t.label}
+                        {t.sub && (
+                          <span className="text-ink-400 text-sm"> — {t.sub}</span>
+                        )}
+                      </span>
                     </li>
                   ))}
                 </ul>

@@ -101,8 +101,8 @@ export function TownHub({ area }: { area: ServiceArea }) {
                   <Image
                     src="/images/hero.png"
                     alt={`J&F Haul crew working in ${cityState}`}
-                    width={1200}
-                    height={800}
+                    width={1920}
+                    height={1080}
                     loading="eager"
                     fetchPriority="high"
                     sizes="(min-width: 1024px) 560px, 100vw"
@@ -296,10 +296,19 @@ export function TownHub({ area }: { area: ServiceArea }) {
                 Call or text {business.phone}. Same-day is often possible when a J&F truck is rolling through the {area.name} area.
               </p>
               <ul className="mt-4 space-y-2 text-ink-500">
-                {["37-mile radius from Calera, AL", "Licensed & insured", "Free upfront quotes"].map((t) => (
-                  <li key={t} className="flex items-center gap-2">
+                {[
+                  { label: "37-mile radius from Calera, AL" },
+                  { label: "Licensed & insured", sub: "COI on request" },
+                  { label: "Free upfront quotes" },
+                ].map((t) => (
+                  <li key={t.label} className="flex items-center gap-2">
                     <Check size={16} className="text-accent-500" aria-hidden="true" />
-                    {t}
+                    <span>
+                      {t.label}
+                      {t.sub && (
+                        <span className="text-ink-400 text-sm"> — {t.sub}</span>
+                      )}
+                    </span>
                   </li>
                 ))}
               </ul>

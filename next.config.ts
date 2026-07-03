@@ -1,7 +1,15 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  async redirects() {
+    return [
+      {
+        source: "/valet-trash-birmingham-al",
+        destination: "/services",
+        statusCode: 301,
+      },
+    ];
+  },
 };
 
 export default nextConfig;

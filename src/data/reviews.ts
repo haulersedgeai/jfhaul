@@ -214,7 +214,6 @@ const serviceCategoryMap: Record<string, ReviewCategory> = {
   "eviction-cleanouts": "Cleanouts",
   "apartment-cleanouts": "Cleanouts",
   "office-cleanouts": "Cleanouts",
-  "valet-trash": "Junk Removal",
 };
 
 export function categoryForService(slug: string): ReviewCategory {

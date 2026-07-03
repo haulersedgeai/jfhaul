@@ -42,13 +42,14 @@ export const business = {
   siteUrl: "https://www.jfhaul.com",
 } as const;
 
-export const trustPoints = [
-  "Licensed & insured",
-  "Family + woman-owned",
-  "Free upfront quotes",
-  "Same-day service",
-  "Eco-friendly disposal",
-  "Locally owned — not a franchise",
+export type TrustPoint = { label: string; sub?: string };
+export const trustPoints: readonly TrustPoint[] = [
+  { label: "Licensed & insured", sub: "COI on request" },
+  { label: "Family + woman-owned" },
+  { label: "Free upfront quotes" },
+  { label: "Same-day service" },
+  { label: "Eco-friendly disposal" },
+  { label: "Locally owned — not a franchise" },
 ] as const;
 
 export const socials = {
@@ -121,7 +122,7 @@ export const services: Service[] = [
   { slug: "eviction-cleanouts", name: "Eviction Cleanouts", blurb: "Fast, thorough turnovers so you can re-list the unit.", icon: "/images/icon-property-cleanouts.png" },
   { slug: "apartment-cleanouts", name: "Apartment Cleanouts", blurb: "Complete unit clear-outs for tenants and managers.", icon: "/images/icon-house-cleanouts.png" },
   { slug: "office-cleanouts", name: "Office Cleanouts", blurb: "Clear out furniture, equipment, and clutter with minimal disruption.", icon: "/images/icon-property-cleanouts.png" },
-  { slug: "valet-trash", name: "Valet Trash", blurb: "Doorstep valet trash service for apartment complexes.", icon: "/images/icon-valet-trash.png" },
+  { slug: "warehouse-cleanouts", name: "Warehouse Cleanout", blurb: "Bulk warehouse and industrial clear-outs — pallets, shelving, machinery, and years of clutter.", icon: "/images/icon-property-cleanouts.png" },
 ];
 
 export const howItWorks: Step[] = [
@@ -179,7 +180,6 @@ export const locationPages: LocationPage[] = [
   { path: "/mattress-removal-birmingham-al", service: "mattress-removal", city: "Birmingham", citySlug: "birmingham", title: "Mattress Removal in Birmingham, AL" },
   { path: "/property-cleanouts-birmingham-al", service: "property-cleanouts", city: "Birmingham", citySlug: "birmingham", title: "Property Cleanouts in Birmingham, AL" },
   { path: "/house-cleanouts-birmingham-al", service: "house-cleanouts", city: "Birmingham", citySlug: "birmingham", title: "House Cleanouts in Birmingham, AL" },
-  { path: "/valet-trash-birmingham-al", service: "valet-trash", city: "Birmingham", citySlug: "birmingham", title: "Valet Trash in Birmingham, AL" },
 
   { path: "/estate-cleanouts-in-trussville-al", service: "estate-cleanouts", city: "Trussville", citySlug: "trussville", title: "Estate Cleanouts in Trussville, AL" },
   { path: "/junk-removal-in-trussville-al", service: "junk-removal", city: "Trussville", citySlug: "trussville", title: "Junk Removal in Trussville, AL" },
@@ -216,7 +216,7 @@ const singularOverrides: Record<string, string> = {
   "eviction-cleanouts": "eviction cleanout",
   "apartment-cleanouts": "apartment cleanout",
   "office-cleanouts": "office cleanout",
-  "valet-trash": "valet trash",
+  "warehouse-cleanouts": "warehouse cleanout",
 };
 
 /** True when the service is a countable event (a/an X). False = mass noun. */
@@ -229,6 +229,7 @@ const countableSlugs = new Set([
   "eviction-cleanouts",
   "apartment-cleanouts",
   "office-cleanouts",
+  "warehouse-cleanouts",
 ]);
 
 export function serviceSingularName(slug: string): string {

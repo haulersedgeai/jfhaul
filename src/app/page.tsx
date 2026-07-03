@@ -108,7 +108,10 @@ export default function Home() {
                       <circle cx="12" cy="10" r="3"/>
                     </svg>
                   </div>
-                  <div className="text-xs font-semibold text-ink-800 pr-1">Licensed & insured</div>
+                  <div className="pr-1 leading-tight">
+                    <div className="text-xs font-semibold text-ink-800">Licensed & insured</div>
+                    <div className="text-[0.65rem] text-ink-400 font-medium mt-0.5">COI on request</div>
+                  </div>
                 </div>
               </div>
             </Reveal>
@@ -201,11 +204,11 @@ export default function Home() {
           <Reveal>
             <div className="relative">
               <div className="absolute -top-6 -left-6 rounded-2xl bg-white p-3 shadow-[var(--shadow-soft)] hidden md:block">
-                <Image src="/images/team-1.jpg" alt="Felicia loading up the J&F trailer" width={220} height={220} className="rounded-xl object-cover h-40 w-40" />
+                <Image src="/images/1-top-left.jpg" alt="Jacorie and Felicia standing together in front of the J&F Haul truck" width={220} height={220} className="rounded-xl object-cover h-40 w-40" />
               </div>
-              <Image src="/images/truck-parked.jpg" alt="J&F Haul trailer parked and ready" width={900} height={700} className="rounded-3xl w-full h-auto object-cover shadow-[var(--shadow-lift)]" />
+              <Image src="/images/2-center.jpg" alt="J&F Haul team hauling a full load out of a Birmingham home" width={900} height={700} className="rounded-3xl w-full h-auto object-cover shadow-[var(--shadow-lift)]" />
               <div className="absolute -bottom-6 -right-4 rounded-2xl bg-white p-3 shadow-[var(--shadow-soft)] hidden md:block">
-                <Image src="/images/team-2.jpg" alt="The J&F crew after a Birmingham cleanout" width={220} height={220} className="rounded-xl object-cover h-40 w-40" />
+                <Image src="/images/3-bottom-right.jpg" alt="J&F Haul crew loading furniture into the trailer after a cleanout" width={220} height={220} className="rounded-xl object-cover h-40 w-40" />
               </div>
             </div>
           </Reveal>

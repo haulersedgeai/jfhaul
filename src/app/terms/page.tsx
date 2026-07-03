@@ -17,7 +17,7 @@ export default function TermsPage() {
 
       <h2>Our services</h2>
       <p>
-        We provide junk removal, furniture and appliance removal, mattress removal, hot tub removal, shed removal, cleanouts (property, house, garage, estate, hoarder, eviction, apartment, office), and valet trash service in and around Birmingham, Alabama.
+        We provide junk removal, furniture and appliance removal, mattress removal, hot tub removal, shed removal, and cleanouts (property, house, garage, estate, hoarder, eviction, apartment, office, and warehouse) in and around Birmingham, Alabama.
       </p>
 
       <h2>Quotes and estimates</h2>

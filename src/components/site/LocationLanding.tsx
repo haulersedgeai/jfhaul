@@ -2,12 +2,14 @@ import Image from "next/image";
 import Link from "next/link";
 import { Phone, ArrowUpRight, Check, Star } from "lucide-react";
 import {
+  birminghamPathForService,
   business,
   howItWorks,
   locationPages,
   serviceBySlug,
   serviceInSentence,
   serviceSingularName,
+  services,
   type LocationPage,
 } from "@/data/site";
 import { iconFor } from "@/data/serviceIcons";
@@ -40,9 +42,7 @@ export function LocationLanding({ page }: { page: LocationPage }) {
   const singularTitle = singular.split(" ").map(capitalize).join(" "); // "Office Cleanout"
   const cityState = `${page.city}, AL`;
 
-  const otherServicesInCity = locationPages
-    .filter((p) => p.citySlug === page.citySlug && p.path !== page.path)
-    .slice(0, 6);
+  const otherServicesInCity = services.filter((s) => s.slug !== page.service);
   const sameServiceOtherCities = locationPages
     .filter((p) => p.service === page.service && p.path !== page.path)
     .slice(0, 6);
@@ -114,10 +114,10 @@ export function LocationLanding({ page }: { page: LocationPage }) {
                 <div className="absolute -bottom-4 -right-4 h-2/3 w-3/4 rounded-[36px] bg-accent-500/95" aria-hidden="true" />
                 <div className="relative overflow-hidden rounded-[28px] shadow-[var(--shadow-lift)] border border-white">
                   <Image
-                    src="/images/hero.png"
-                    alt={`${service?.name ?? page.title} crew working in ${cityState}`}
-                    width={1200}
-                    height={800}
+                    src="/images/dump-trailer-image.JPG"
+                    alt={`J&F Haul dump trailer on a ${service?.name ?? page.title} job in ${cityState}`}
+                    width={1704}
+                    height={923}
                     loading="eager"
                     fetchPriority="high"
                     sizes="(min-width: 1024px) 560px, 100vw"
@@ -296,21 +296,15 @@ export function LocationLanding({ page }: { page: LocationPage }) {
       <Section bg="cream">
         <div className="grid gap-8 md:grid-cols-2">
           <Card className="p-6 md:p-8">
-            <div className="text-xs font-bold uppercase tracking-[0.18em] text-accent-600 mb-3">Other services in {page.city}</div>
+            <div className="text-xs font-bold uppercase tracking-[0.18em] text-accent-600 mb-3">Also offered in {page.city}</div>
             <ul className="grid gap-2 sm:grid-cols-2">
-              {otherServicesInCity.map((p) => {
-                const svc = serviceBySlug(p.service);
-                return (
-                  <li key={p.path}>
-                    <Link href={p.path} className="text-brand-700 hover:text-brand-900">
-                      {svc?.name ?? p.title}
-                    </Link>
-                  </li>
-                );
-              })}
-              {otherServicesInCity.length === 0 && (
-                <li className="text-ink-500">More {page.city} services coming soon — call for anything not listed.</li>
-              )}
+              {otherServicesInCity.map((s) => (
+                <li key={s.slug}>
+                  <Link href={birminghamPathForService(s.slug)} className="text-brand-700 hover:text-brand-900">
+                    {s.name}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </Card>
           {sameServiceOtherCities.length > 0 && (

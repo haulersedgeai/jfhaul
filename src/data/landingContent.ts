@@ -199,17 +199,6 @@ const serviceCopy: Record<string, {
     who: "We come after-hours or on weekends so your team keeps working. We recycle office paper, e-waste, and metal furniture wherever we can.",
     hook: "Come Monday, your suite is ready for the next chapter.",
   },
-  "valet-trash": {
-    h2: "Valet trash service for apartment complexes",
-    what: [
-      "Nightly door-to-door pickup",
-      "Consistent, uniformed team",
-      "Compactor and dumpster coordination",
-      "Resident-friendly, HOA-approved routines",
-    ],
-    who: "We work with property management companies across the Birmingham metro. Reliable schedules, real people, and no surprise no-shows.",
-    hook: "Cleaner hallways. Happier residents. One consistent crew.",
-  },
 };
 
 export function landingCopy(page: LocationPage) {
