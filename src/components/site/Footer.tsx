@@ -89,8 +89,9 @@ export function Footer() {
             <div className="mt-8">
               <FooterHeading>Company</FooterHeading>
               <ul className="space-y-2">
-                <li><Link href="/about" className="text-ink-200 hover:text-white text-sm">About</Link></li>
+                <li><Link href="/about" className="text-ink-200 hover:text-white text-sm">About Us</Link></li>
                 <li><Link href="/reviews" className="text-ink-200 hover:text-white text-sm">Reviews</Link></li>
+                <li><Link href="/faq" className="text-ink-200 hover:text-white text-sm">FAQ</Link></li>
                 <li><Link href="/service-areas" className="text-ink-200 hover:text-white text-sm">Service areas</Link></li>
                 <li><Link href="/contact" className="text-ink-200 hover:text-white text-sm">Contact</Link></li>
               </ul>

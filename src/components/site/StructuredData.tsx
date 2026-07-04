@@ -79,14 +79,21 @@ export function FAQSchema({ items = faqs }: { items?: { q: string; a: string }[]
 export function ServiceSchema({
   serviceName,
   areaServed,
+  additionalAreasServed,
   url,
   description,
 }: {
   serviceName: string;
   areaServed: string;
+  additionalAreasServed?: string[];
   url: string;
   description: string;
 }) {
+  const primaryArea = { "@type": "City", name: areaServed };
+  const extraAreas = (additionalAreasServed ?? []).map((name) => ({
+    "@type": "Place",
+    name,
+  }));
   const data = {
     "@context": "https://schema.org",
     "@type": "Service",
@@ -97,7 +104,8 @@ export function ServiceSchema({
       name: business.legalName,
       telephone: `+1-${business.phone}`,
     },
-    areaServed: { "@type": "City", name: areaServed },
+    areaServed:
+      extraAreas.length > 0 ? [primaryArea, ...extraAreas] : primaryArea,
     url,
     description,
   };

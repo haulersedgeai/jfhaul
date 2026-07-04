@@ -9,7 +9,7 @@ const cityFlavor: Record<string, {
     intro:
       "Birmingham is home base for J&F, and it's where we've built our reputation one clean-out at a time. From Southside apartments to family homes in Crestwood, Roebuck, and Forest Park, we know these driveways, alleys, and stairwells like they're our own.",
     neighborhoods:
-      "We serve every corner of Birmingham — Avondale, Highland Park, Southside, Woodlawn, Ensley, Crestwood, Forest Park, East Lake, Norwood, Roebuck, and beyond.",
+      "We serve every corner of Birmingham — Avondale, Highland Park, Southside, Woodlawn, Ensley, Crestwood, Forest Park, East Lake, Norwood, Roebuck, and beyond. We also cover the 280 corridor communities like Meadowbrook, Inverness, and Indian Springs Village.",
     local:
       "Because we live and work in Birmingham, we can usually be on your street within a few hours. We schedule around Magic City traffic and know which side streets to avoid at rush hour.",
   },
@@ -36,6 +36,14 @@ const cityFlavor: Record<string, {
       "We cover all of Vestavia Hills — Cahaba Heights, Liberty Park, Rocky Ridge, Altadena Valley, and the neighborhoods around US-31 and I-459.",
     local:
       "Tight driveways, mature trees, and pretty landscaping — we know the drill. We protect your floors, your grass, and your gate on the way in and out.",
+  },
+  "indian-springs-village": {
+    intro:
+      "Indian Springs Village is one of those quiet, tucked-away pockets south of Hoover where the driveways are long, the trees are big, and folks like their yards left in better shape than we found them. We fit right in — small crew, clean truck, no drama.",
+    neighborhoods:
+      "We serve every part of Indian Springs Village — the neighborhoods off Cahaba Valley Road, homes bordering the Cahaba River, properties near Indian Springs School, and the wooded lots along Highway 119.",
+    local:
+      "Because we work Hoover and the 280 corridor every week, we can usually swing by Indian Springs Village the same day. We're used to gravel drives, long approaches, and gated communities — just give us the code and we'll handle the rest.",
   },
 };
 
@@ -200,6 +208,56 @@ const serviceCopy: Record<string, {
     hook: "Come Monday, your suite is ready for the next chapter.",
   },
 };
+
+export type Neighborhood = { name: string; blurb: string };
+
+/**
+ * Neighborhood-level service coverage listed under parent city pages.
+ * These are NOT standalone routes — they only render as sections on the
+ * matching city's LocationLanding and feed extra `areaServed` schema entries.
+ */
+const cityNeighborhoods: Record<string, Neighborhood[]> = {
+  birmingham: [
+    {
+      name: "Meadowbrook",
+      blurb:
+        "Meadowbrook's long cul-de-sacs and family-sized homes off US-280 mean we're used to loading up basements, garages, and back decks in a single stop.",
+    },
+    {
+      name: "Inverness",
+      blurb:
+        "Inverness has some of our most regular customers — established homes near the lake and Inverness Center where clean, quiet turnarounds matter.",
+    },
+  ],
+  hoover: [
+    {
+      name: "Ross Bridge",
+      blurb:
+        "Ross Bridge townhomes and detached homes near the resort get the same low-key crew every visit — HOA-tidy trucks and no torn-up landscaping.",
+    },
+    {
+      name: "Greystone",
+      blurb:
+        "Greystone gate codes, guarded entries, and long driveways are second nature to us. We work respectfully and clean up like we were never there.",
+    },
+    {
+      name: "Lake Cyrus",
+      blurb:
+        "Lake Cyrus streets can get tight on trash day. We schedule around it and bring the smaller trailer when the driveway calls for it.",
+    },
+  ],
+  "vestavia-hills": [
+    {
+      name: "Liberty Park",
+      blurb:
+        "Liberty Park's rolling hills and newer builds off I-459 are a familiar route for us — we work quietly and leave the driveway spotless.",
+    },
+  ],
+};
+
+export function cityNeighborhoodsFor(citySlug: string): Neighborhood[] {
+  return cityNeighborhoods[citySlug] ?? [];
+}
 
 export function landingCopy(page: LocationPage) {
   const c = cityFlavor[page.citySlug] ?? cityFlavor.birmingham;

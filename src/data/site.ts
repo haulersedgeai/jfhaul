@@ -65,6 +65,7 @@ export const cities = [
   { slug: "trussville", name: "Trussville", state: "AL" },
   { slug: "hoover", name: "Hoover", state: "AL" },
   { slug: "vestavia-hills", name: "Vestavia Hills", state: "AL" },
+  { slug: "indian-springs-village", name: "Indian Springs Village", state: "AL" },
 ] as const;
 
 /**
@@ -194,6 +195,8 @@ export const locationPages: LocationPage[] = [
   { path: "/eviction-cleanouts-vestavia-hills-al", service: "eviction-cleanouts", city: "Vestavia Hills", citySlug: "vestavia-hills", title: "Eviction Cleanouts in Vestavia Hills, AL" },
   { path: "/junk-removal-vestavia-hills-al", service: "junk-removal", city: "Vestavia Hills", citySlug: "vestavia-hills", title: "Junk Removal in Vestavia Hills, AL" },
   { path: "/estate-cleanouts-Vestavia-Hills-AL", service: "estate-cleanouts", city: "Vestavia Hills", citySlug: "vestavia-hills", title: "Estate Cleanouts in Vestavia Hills, AL" },
+
+  { path: "/junk-removal-indian-springs-village-al", service: "junk-removal", city: "Indian Springs Village", citySlug: "indian-springs-village", title: "Junk Removal in Indian Springs Village, AL" },
 ];
 
 export function serviceBySlug(slug: string): Service | undefined {

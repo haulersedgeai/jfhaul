@@ -203,8 +203,11 @@ export function Header() {
           <NavLink href="/reviews" onClick={() => setMenu(null)}>
             Reviews
           </NavLink>
+          <NavLink href="/faq" onClick={() => setMenu(null)}>
+            FAQ
+          </NavLink>
           <NavLink href="/about" onClick={() => setMenu(null)}>
-            About
+            About Us
           </NavLink>
         </nav>
 
@@ -465,11 +468,18 @@ function MobileNav({ onNavigate }: { onNavigate: () => void }) {
         Reviews
       </Link>
       <Link
+        href="/faq"
+        onClick={onNavigate}
+        className="block px-4 py-3 rounded-xl bg-cream-50 font-bold text-ink-800 text-lg hover:bg-brand-50 hover:text-brand-800"
+      >
+        FAQ
+      </Link>
+      <Link
         href="/about"
         onClick={onNavigate}
         className="block px-4 py-3 rounded-xl bg-cream-50 font-bold text-ink-800 text-lg hover:bg-brand-50 hover:text-brand-800"
       >
-        About
+        About Us
       </Link>
     </nav>
   );

@@ -13,7 +13,7 @@ import {
   type LocationPage,
 } from "@/data/site";
 import { iconFor } from "@/data/serviceIcons";
-import { landingCopy, landingFAQ } from "@/data/landingContent";
+import { cityNeighborhoodsFor, landingCopy, landingFAQ } from "@/data/landingContent";
 import { Section, SectionHeader } from "@/components/ui/Section";
 import { Card } from "@/components/ui/Card";
 import { Kicker } from "@/components/ui/Kicker";
@@ -36,6 +36,7 @@ export function LocationLanding({ page }: { page: LocationPage }) {
   const faqs = landingFAQ(page);
   const canonical = `${business.siteUrl}${page.path}`;
   const Icon = iconFor(page.service);
+  const neighborhoods = cityNeighborhoodsFor(page.citySlug);
 
   const singular = serviceSingularName(page.service); // "office cleanout"
   const inSentence = serviceInSentence(page.service); // "an office cleanout" / "junk removal"
@@ -59,6 +60,7 @@ export function LocationLanding({ page }: { page: LocationPage }) {
       <ServiceSchema
         serviceName={service?.name ?? page.title}
         areaServed={cityState}
+        additionalAreasServed={neighborhoods.map((n) => `${n.name}, ${page.city}, AL`)}
         url={canonical}
         description={`${service?.name ?? page.title} in ${cityState} — provided by ${business.legalName}.`}
       />
@@ -275,6 +277,32 @@ export function LocationLanding({ page }: { page: LocationPage }) {
           </div>
         </div>
       </section>
+
+      {/* NEIGHBORHOODS */}
+      {neighborhoods.length > 0 && (
+        <Section bg="cream">
+          <SectionHeader
+            eyebrow={`${page.city} neighborhoods`}
+            title="Communities & neighborhoods we serve"
+            intro={`Regular routes we run inside ${page.city}. Not on the list? Call — we probably still cover it.`}
+          />
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {neighborhoods.map((n) => (
+              <Reveal key={n.name}>
+                <Card className="p-6 h-full">
+                  <div className="text-xs font-bold uppercase tracking-[0.18em] text-accent-600 mb-2">
+                    {page.city} area
+                  </div>
+                  <div className="font-display font-bold text-xl text-ink-800">
+                    {n.name}
+                  </div>
+                  <p className="mt-3 text-ink-500 leading-relaxed">{n.blurb}</p>
+                </Card>
+              </Reveal>
+            ))}
+          </div>
+        </Section>
+      )}
 
       {/* FAQ */}
       <Section bg="white">
