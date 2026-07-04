@@ -3,11 +3,6 @@
 import { useState, type FormEvent } from "react";
 import { services, business } from "@/data/site";
 
-// Web3Forms access key comes from NEXT_PUBLIC_WEB3FORMS_KEY.
-// Swap the client's key by updating that env var — no code change needed.
-const WEB3FORMS_KEY =
-  process.env.NEXT_PUBLIC_WEB3FORMS_KEY || "YOUR_WEB3FORMS_ACCESS_KEY";
-
 const PHONE_RE = /^[+()\d\s.\-]{7,}$/;
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -83,17 +78,13 @@ export function QuoteForm({
     setMessageState("");
 
     try {
-      const res = await fetch("https://api.web3forms.com/submit", {
+      const res = await fetch("/api/lead", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           Accept: "application/json",
         },
         body: JSON.stringify({
-          access_key: WEB3FORMS_KEY,
-          subject: "New Quote Request — J&F Haul and Deliver",
-          from_name: "J&F Website",
-          replyto: trimmedEmail || undefined,
           name: trimmedName,
           phone: trimmedPhone,
           email: trimmedEmail,
