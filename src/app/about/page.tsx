@@ -39,7 +39,7 @@ export default function AboutPage() {
               </p>
               <div className="mt-7 flex flex-wrap items-center gap-3">
                 <Link
-                  href="/book"
+                  href="/contact"
                   className="inline-flex items-center gap-2 rounded-full bg-accent-500 hover:bg-accent-600 text-white font-semibold px-6 py-4 text-lg shadow-[var(--shadow-lift)]"
                 >
                   Get a free quote
@@ -194,7 +194,7 @@ export default function AboutPage() {
             <a href={business.telHref} className="inline-flex items-center gap-2 rounded-full bg-accent-500 hover:bg-accent-600 text-white font-semibold px-7 py-4 text-lg shadow-[var(--shadow-lift)]">
               <Phone size={18} aria-hidden="true" /> {business.phone}
             </a>
-            <Link href="/book" className="inline-flex items-center gap-2 rounded-full bg-brand-700 hover:bg-brand-800 text-white font-semibold px-7 py-4 text-lg">
+            <Link href="/contact" className="inline-flex items-center gap-2 rounded-full bg-brand-700 hover:bg-brand-800 text-white font-semibold px-7 py-4 text-lg">
               Get a free quote
             </Link>
           </div>

@@ -218,7 +218,7 @@ export function Header() {
             {business.phone}
           </a>
           <Link
-            href="/book"
+            href="/contact"
             className="inline-flex items-center gap-2 rounded-full bg-accent-500 hover:bg-accent-600 px-5 py-2.5 text-white font-semibold shadow-[var(--shadow-soft)] transition"
           >
             Get a Quote
@@ -277,7 +277,7 @@ export function Header() {
                 Call {business.phone}
               </a>
               <Link
-                href="/book"
+                href="/contact"
                 onClick={() => setOpen(false)}
                 className="inline-flex items-center justify-center gap-2 rounded-full bg-accent-500 px-5 py-3 text-white font-semibold"
               >
