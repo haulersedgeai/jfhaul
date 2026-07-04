@@ -16,19 +16,23 @@ function escapeHtml(v: string) {
 }
 
 export async function POST(request: Request) {
+  console.log("[lead] route hit");
+
   let body: Record<string, unknown>;
   try {
     body = await request.json();
   } catch {
+    console.warn("[lead] invalid json body");
     return NextResponse.json(
       { success: false, message: "Invalid request." },
       { status: 400 }
     );
   }
 
-  const botcheck = String(body.botcheck ?? "");
-  const website = String(body.website ?? "");
-  if (botcheck || website) {
+  const botcheck = Boolean(body.botcheck);
+  const hpUrl = String(body.hp_url ?? "").trim();
+  if (botcheck || hpUrl) {
+    console.warn("[lead] honeypot tripped", { botcheck, hpUrl });
     return NextResponse.json({ success: true });
   }
 
@@ -41,24 +45,28 @@ export async function POST(request: Request) {
   const source = String(body.source ?? "site").trim();
 
   if (!name) {
+    console.warn("[lead] validation fail: name");
     return NextResponse.json(
       { success: false, message: "Name is required." },
       { status: 400 }
     );
   }
   if (!phone) {
+    console.warn("[lead] validation fail: phone (empty)");
     return NextResponse.json(
       { success: false, message: "Phone is required." },
       { status: 400 }
     );
   }
   if (!PHONE_RE.test(phone)) {
+    console.warn("[lead] validation fail: phone (format)");
     return NextResponse.json(
       { success: false, message: "That doesn't look like a valid phone." },
       { status: 400 }
     );
   }
   if (email && !EMAIL_RE.test(email)) {
+    console.warn("[lead] validation fail: email (format)");
     return NextResponse.json(
       { success: false, message: "Please enter a valid email." },
       { status: 400 }
@@ -70,7 +78,7 @@ export async function POST(request: Request) {
   const to = process.env.LEAD_TO_EMAIL;
 
   if (!apiKey || !from || !to) {
-    console.error("Lead route missing env vars", {
+    console.error("[lead] missing env", {
       hasKey: Boolean(apiKey),
       hasFrom: Boolean(from),
       hasTo: Boolean(to),
@@ -128,16 +136,17 @@ export async function POST(request: Request) {
     });
 
     if (error) {
-      console.error("Resend send failed:", error);
+      console.error("[lead] resend error", error);
       return NextResponse.json(
         { success: false, message: "Could not send your request." },
         { status: 502 }
       );
     }
 
+    console.log("[lead] sent ok", { to, from, source });
     return NextResponse.json({ success: true });
   } catch (err) {
-    console.error("Resend threw:", err);
+    console.error("[lead] resend threw", err);
     return NextResponse.json(
       { success: false, message: "Could not send your request." },
       { status: 502 }

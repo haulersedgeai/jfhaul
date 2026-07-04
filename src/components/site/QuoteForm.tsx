@@ -48,9 +48,11 @@ export function QuoteForm({
 
     // Honeypot — bail silently if a bot fills these.
     const form = e.currentTarget;
-    const botcheck = (form.elements.namedItem("botcheck") as HTMLInputElement | null)?.value;
-    const website = (form.elements.namedItem("website") as HTMLInputElement | null)?.value;
-    if (botcheck || website) {
+    const botcheckEl = form.elements.namedItem("botcheck") as HTMLInputElement | null;
+    const hpUrlEl = form.elements.namedItem("hp_url") as HTMLInputElement | null;
+    const botcheckChecked = Boolean(botcheckEl?.checked);
+    const hpUrl = (hpUrlEl?.value ?? "").trim();
+    if (botcheckChecked || hpUrl) {
       setStatus("success");
       setMessageState("Thanks! We'll be in touch shortly.");
       return;
@@ -92,6 +94,8 @@ export function QuoteForm({
           address: address.trim(),
           message: messageBody.trim(),
           source,
+          botcheck: botcheckChecked,
+          hp_url: hpUrl,
         }),
       });
       const data = await res.json().catch(() => null);
@@ -149,12 +153,12 @@ export function QuoteForm({
       {/* honeypots — bots fill these; humans never see them */}
       <div className="absolute -left-[9999px] w-px h-px overflow-hidden" aria-hidden="true">
         <label>
-          Website
-          <input type="text" name="website" tabIndex={-1} autoComplete="off" />
+          Leave blank
+          <input type="text" name="hp_url" tabIndex={-1} autoComplete="off" />
         </label>
         <label>
           Do not fill
-          <input type="checkbox" name="botcheck" tabIndex={-1} />
+          <input type="checkbox" name="botcheck" tabIndex={-1} defaultChecked={false} />
         </label>
       </div>
 
