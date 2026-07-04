@@ -16,13 +16,10 @@ function escapeHtml(v: string) {
 }
 
 export async function POST(request: Request) {
-  console.log("[lead] route hit");
-
   let body: Record<string, unknown>;
   try {
     body = await request.json();
   } catch {
-    console.warn("[lead] invalid json body");
     return NextResponse.json(
       { success: false, message: "Invalid request." },
       { status: 400 }
@@ -45,28 +42,24 @@ export async function POST(request: Request) {
   const source = String(body.source ?? "site").trim();
 
   if (!name) {
-    console.warn("[lead] validation fail: name");
     return NextResponse.json(
       { success: false, message: "Name is required." },
       { status: 400 }
     );
   }
   if (!phone) {
-    console.warn("[lead] validation fail: phone (empty)");
     return NextResponse.json(
       { success: false, message: "Phone is required." },
       { status: 400 }
     );
   }
   if (!PHONE_RE.test(phone)) {
-    console.warn("[lead] validation fail: phone (format)");
     return NextResponse.json(
       { success: false, message: "That doesn't look like a valid phone." },
       { status: 400 }
     );
   }
   if (email && !EMAIL_RE.test(email)) {
-    console.warn("[lead] validation fail: email (format)");
     return NextResponse.json(
       { success: false, message: "Please enter a valid email." },
       { status: 400 }
@@ -143,7 +136,6 @@ export async function POST(request: Request) {
       );
     }
 
-    console.log("[lead] sent ok", { to, from, source });
     return NextResponse.json({ success: true });
   } catch (err) {
     console.error("[lead] resend threw", err);
