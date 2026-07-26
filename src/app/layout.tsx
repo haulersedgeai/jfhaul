@@ -1,11 +1,14 @@
 import type { Metadata, Viewport } from "next";
 import { Inter, Bricolage_Grotesque } from "next/font/google";
+import { GoogleTagManager } from "@next/third-parties/google";
 import "./globals.css";
 import { business } from "@/data/site";
 import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
 import { StickyCallBar } from "@/components/site/StickyCallBar";
 import { OrganizationSchema } from "@/components/site/StructuredData";
+
+const GTM_ID = "GTM-MSSBFWXF";
 
 const inter = Inter({
   variable: "--font-sans",
@@ -70,12 +73,21 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" className={`${inter.variable} ${display.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col bg-[var(--color-cream-100)] text-ink-800">
+        <noscript>
+          <iframe
+            src={`https://www.googletagmanager.com/ns.html?id=${GTM_ID}`}
+            height="0"
+            width="0"
+            style={{ display: "none", visibility: "hidden" }}
+          />
+        </noscript>
         <OrganizationSchema />
         <Header />
         <main className="flex-1">{children}</main>
         <Footer />
         <StickyCallBar />
       </body>
+      <GoogleTagManager gtmId={GTM_ID} />
     </html>
   );
 }
