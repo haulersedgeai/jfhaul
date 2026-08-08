@@ -13,6 +13,16 @@ const nextConfig: NextConfig = {
         destination: "/contact",
         statusCode: 301,
       },
+      {
+        source: "/estate-cleanouts-birmingham--al",
+        destination: "/estate-cleanouts-birmingham-al",
+        statusCode: 301,
+      },
+      {
+        source: "/hot-tub-removal",
+        destination: "/hot-tub-removal-birmingham--al",
+        statusCode: 301,
+      },
     ];
   },
 };

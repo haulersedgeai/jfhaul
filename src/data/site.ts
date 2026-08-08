@@ -185,8 +185,6 @@ export const locationPages: LocationPage[] = [
   { path: "/estate-cleanouts-in-trussville-al", service: "estate-cleanouts", city: "Trussville", citySlug: "trussville", title: "Estate Cleanouts in Trussville, AL" },
   { path: "/junk-removal-in-trussville-al", service: "junk-removal", city: "Trussville", citySlug: "trussville", title: "Junk Removal in Trussville, AL" },
 
-  { path: "/hot-tub-removal", service: "hot-tub-removal", city: "Birmingham", citySlug: "birmingham", title: "Hot Tub Removal" },
-
   { path: "/junk-removal-in-hoover-al", service: "junk-removal", city: "Hoover", citySlug: "hoover", title: "Junk Removal in Hoover, AL" },
   { path: "/estate-cleanouts-in-hoover-al", service: "estate-cleanouts", city: "Hoover", citySlug: "hoover", title: "Estate Cleanouts in Hoover, AL" },
   { path: "/office-cleanout-Hoover-AL", service: "office-cleanouts", city: "Hoover", citySlug: "hoover", title: "Office Cleanouts in Hoover, AL" },
