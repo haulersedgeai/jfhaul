@@ -23,6 +23,11 @@ const nextConfig: NextConfig = {
         destination: "/hot-tub-removal-birmingham--al",
         statusCode: 301,
       },
+      {
+        source: "/homepage",
+        destination: "/",
+        statusCode: 301,
+      },
     ];
   },
 };
