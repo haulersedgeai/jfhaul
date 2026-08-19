@@ -1,10 +1,30 @@
 import { NextResponse } from "next/server";
 import { Resend } from "resend";
+import { forwardToGHL, splitName } from "@/lib/ghl";
 
 export const runtime = "nodejs";
 
 const PHONE_RE = /^[+()\d\s.\-]{7,}$/;
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+/** No human fills this form out faster than this. */
+const MIN_FILL_MS = 3000;
+const MESSAGE_MAX = 500;
+const UTM_MAX = 300;
+
+/** Empty string means "never stamped", not epoch zero. */
+function parseStartedAt(raw: unknown): number {
+  if (typeof raw === "number") return raw;
+  if (typeof raw === "string" && raw.trim() !== "") return Number(raw);
+  return NaN;
+}
+
+function sanitizeUtm(value: unknown): string | undefined {
+  if (typeof value !== "string") return undefined;
+  const trimmed = value.trim();
+  if (!trimmed) return undefined;
+  return trimmed.slice(0, UTM_MAX);
+}
 
 function escapeHtml(v: string) {
   return v
@@ -30,6 +50,18 @@ export async function POST(request: Request) {
   const hpUrl = String(body.hp_url ?? "").trim();
   if (botcheck || hpUrl) {
     console.warn("[lead] honeypot tripped", { botcheck, hpUrl });
+    return NextResponse.json({ success: true });
+  }
+
+  // Timing gate — same silent-success shape as the honeypot so bots learn nothing.
+  const startedAt = parseStartedAt(body.form_started_at);
+  if (!Number.isFinite(startedAt)) {
+    console.warn("[BOT_DROP]", { reason: "missing-form-started-at", elapsed: null });
+    return NextResponse.json({ success: true });
+  }
+  const elapsed = Date.now() - startedAt;
+  if (elapsed < MIN_FILL_MS) {
+    console.warn("[BOT_DROP]", { reason: "too-fast", elapsed });
     return NextResponse.json({ success: true });
   }
 
@@ -65,6 +97,28 @@ export async function POST(request: Request) {
       { status: 400 }
     );
   }
+
+  // Forward to the CRM before touching email. Email is fire-and-forget with no
+  // persistence, so a Resend outage or a bad env would otherwise lose the lead.
+  const attribution =
+    body.attribution && typeof body.attribution === "object"
+      ? (body.attribution as Record<string, unknown>)
+      : {};
+
+  await forwardToGHL({
+    ...splitName(name),
+    email: email || undefined,
+    phone,
+    lead_source: "Website — jfhaul.com",
+    page: source,
+    utm_source: sanitizeUtm(attribution.utm_source),
+    utm_medium: sanitizeUtm(attribution.utm_medium),
+    utm_campaign: sanitizeUtm(attribution.utm_campaign),
+    service: service || undefined,
+    city: address || undefined,
+    message: message ? message.slice(0, MESSAGE_MAX) : undefined,
+    form: "quote",
+  });
 
   const apiKey = process.env.RESEND_API_KEY;
   const from = process.env.LEAD_FROM_EMAIL;

@@ -136,16 +136,14 @@ export function Footer() {
             <Link href="/privacy" className="hover:text-white">Privacy</Link>
           </div>
           <div className="md:text-right">
-            Powered by{" "}
             <a
               href="https://adimize.com"
               target="_blank"
               rel="noopener noreferrer"
               className="hover:text-white underline-offset-2 hover:underline"
             >
-              Adimize
+              Powered by Adimize — Local Service Digital Marketing.
             </a>
-            {" "}— Local Service Digital Marketing.
           </div>
         </div>
       </div>

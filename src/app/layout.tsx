@@ -7,6 +7,7 @@ import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
 import { StickyCallBar } from "@/components/site/StickyCallBar";
 import { OrganizationSchema } from "@/components/site/StructuredData";
+import { AttributionCapture } from "@/components/site/AttributionCapture";
 
 const GTM_ID = "GTM-MSSBFWXF";
 
@@ -82,6 +83,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           />
         </noscript>
         <OrganizationSchema />
+        <AttributionCapture />
         <Header />
         <main className="flex-1">{children}</main>
         <Footer />

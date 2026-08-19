@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { useEffect, useRef, useState, type FormEvent } from "react";
 import { services, business } from "@/data/site";
+import { getAttribution } from "@/lib/attribution";
 
 const PHONE_RE = /^[+()\d\s.\-]{7,}$/;
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -37,6 +38,13 @@ export function QuoteForm({
   const [service, setService] = useState(defaultService ?? "");
   const [address, setAddress] = useState(defaultCity ? `${defaultCity}, AL` : "");
   const [messageBody, setMessageBody] = useState("");
+
+  // Stamped after mount (never during render) so the server can tell a real
+  // fill-out from an instant bot POST.
+  const formStartedAtRef = useRef<number | null>(null);
+  useEffect(() => {
+    formStartedAtRef.current = Date.now();
+  }, []);
 
   const wrapper =
     variant === "card"
@@ -96,6 +104,8 @@ export function QuoteForm({
           source,
           botcheck: botcheckChecked,
           hp_url: hpUrl,
+          form_started_at: formStartedAtRef.current,
+          attribution: getAttribution(),
         }),
       });
       const data = await res.json().catch(() => null);
